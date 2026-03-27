@@ -8,5 +8,5 @@ export default defineConfig({
     port: 5173,
     host: true
   },
-  base: './'
+  base: '/g360-discount-calculator/'
 });
