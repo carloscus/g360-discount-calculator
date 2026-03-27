@@ -8,6 +8,7 @@
   import Toast from '../lib/components/Toast.svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   
   // Estado del toast
   let showToast = false;
@@ -21,10 +22,10 @@
   
   // Determinar página actual basada en la ruta
   let currentPage: 'home' | 'pricing' = 'home';
-  $: currentPage = $page.url.pathname === '/pricing' ? 'pricing' : 'home';
+  $: currentPage = $page.url.pathname.endsWith('/pricing') ? 'pricing' : 'home';
 
   function navigateTo(page: 'home' | 'pricing') {
-    goto(page === 'pricing' ? '/pricing' : '/');
+    goto(page === 'pricing' ? `${base}/pricing` : `${base}/`);
   }
   
   // Función para mostrar toast
