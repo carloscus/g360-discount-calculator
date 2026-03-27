@@ -263,10 +263,18 @@
   @media (max-width: 400px) {
     .header-content {
       flex-wrap: wrap;
+      justify-content: center;
     }
     
     .logo-section {
       order: 1;
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .title-section {
+      text-align: center;
     }
     
     .navigation {
