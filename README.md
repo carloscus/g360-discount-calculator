@@ -99,8 +99,8 @@ g360-discount-calculator/
 ├── static/                    # Recursos estáticos
 │   ├── logo-g360.svg
 │   ├── logo-g360-light.svg
+│   ├── icon-g360.png          # Icono APK/PWA
 │   ├── favicon.svg
-│   ├── icon-192.png
 │   └── manifest.json          # PWA manifest
 ├── package.json
 ├── svelte.config.js
