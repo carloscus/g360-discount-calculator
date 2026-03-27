@@ -1,0 +1,1 @@
+import{l as o,b as c,c as t,d as u,u as a}from"./DtdsoVl4.js";function f(e){t===null&&o(),u&&t.l!==null?l(t).m.push(e):c(()=>{const n=a(e);if(typeof n=="function")return n})}function l(e){var n=e.l;return n.u??(n.u={a:[],b:[],m:[]})}export{f as o};
