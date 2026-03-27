@@ -39,8 +39,12 @@ Esta herramienta permite a usuarios del área comercial y ventas calcular rápid
 
 ### 📱 Experiencia de Usuario
 - Diseño responsive optimizado para móvil (390px) y desktop
+- **Optimizado 90% móvil / 10% PC**
 - Tema oscuro/claro con efectos glassmorphism y neón
-- PWA - Instalable como aplicación nativa
+- **PWA** - Instalable como aplicación nativa (APK)
+- **Safe Area** - Compatible con notch iOS y Android
+- **Haptic Feedback** - Vibración al interacturar (móvil)
+- Interfaz táctil optimizada con botones grandes y textos legibles
 
 ---
 
@@ -84,7 +88,8 @@ g360-discount-calculator/
 │   │   ├── utils/             # Funciones utilitarias
 │   │   │   ├── calculations.ts  # Cálculos matemáticos
 │   │   │   ├── formatting.ts    # Formateo de valores
-│   │   │   └── sharing.ts       # Compartir/WhatsApp
+│   │   │   ├── sharing.ts       # Compartir/WhatsApp
+│   │   │   └── haptics.ts       # Vibración/tactil feedback
 │   │   └── types/             # Definiciones TypeScript
 │   │       └── index.ts
 │   ├── routes/                # Rutas SvelteKit
@@ -94,7 +99,9 @@ g360-discount-calculator/
 ├── static/                    # Recursos estáticos
 │   ├── logo-g360.svg
 │   ├── logo-g360-light.svg
-│   └── favicon.svg
+│   ├── favicon.svg
+│   ├── icon-192.png
+│   └── manifest.json          # PWA manifest
 ├── package.json
 ├── svelte.config.js
 ├── vite.config.ts
@@ -207,14 +214,17 @@ calculateMarkup()               // Markup desde precio
 | `--g360-muted` | `#94a3b8` | Texto secundario |
 | `--g360-border` | `#1e293b` | Bordes |
 
-### Tipografía
+### Tipografía (Optimizado Móvil Nativo)
 
 | Elemento | Tamaño | Peso |
 |----------|--------|------|
-| Títulos | 1.25rem | 800 |
-| Valores | 1rem | 800 |
-| Etiquetas | 0.7rem | 700 |
-| Botones | 1rem | 800 |
+| Títulos | 1.1-1.25rem | 700-800 |
+| Valores | 1.1-1.25rem | 800 |
+| Etiquetas | 0.8-0.85rem | 700-800 |
+| Botones | 0.85rem | 700 |
+| Inputs | 1.1-1.2rem | 700 |
+
+> Base: 15px (14px en móviles pequeños ≤400px)
 
 ### Efectos Visuales
 
@@ -334,6 +344,15 @@ npx gh-pages -d build -t true
 ---
 
 ## 📋 Changelog
+
+### v2.3.0 (2026-03-27)
+- ✨ **Optimización móvil nativo** - Interfaz 90% móvil / 10% PC
+- ✨ **Tamaños aumentados** - Labels 0.85rem, valores 1.1rem, botones 52-56px
+- ✨ **PWA completo** - manifest.json, meta tags, iconos
+- ✨ **Safe Area** - Compatible con notch iOS/Android
+- ✨ **Haptic Feedback** - Vibración al interacturar (navigator.vibrate)
+- ✨ **Mensaje WhatsApp** - UTF-8 limpio, emojis animados
+- 🎨 Mejoras en Experience de usuario móvil
 
 ### v2.2.0 (2026-03-26)
 - ✨ Simulación de descuentos sin precio base

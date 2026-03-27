@@ -95,7 +95,7 @@
     font-weight: 700;
     color: var(--theme-text);
     text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     letter-spacing: 0.5px;
   }
   
@@ -148,8 +148,8 @@
 
   @media (max-width: 480px) {
     .price-input-container { padding: 0.75rem; margin-bottom: 0.5rem; }
-    .price-input { font-size: 1.1rem; padding: 0.65rem 0.8rem 0.65rem 2.2rem; min-height: 48px; }
-    .input-label { font-size: 0.65rem; }
-    .currency-prefix { left: 0.65rem; font-size: 0.85rem; }
+    .price-input { font-size: 1.15rem; padding: 0.7rem 0.9rem 0.7rem 2.3rem; min-height: 52px; }
+    .input-label { font-size: 0.8rem; }
+    .currency-prefix { left: 0.7rem; font-size: 0.95rem; }
   }
 </style>

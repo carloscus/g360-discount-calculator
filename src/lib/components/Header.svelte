@@ -3,23 +3,24 @@
   import type { Page } from '../types';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
+  import { hapticSelect } from '../utils/haptics';
   
   export let currentPage: Page = 'home';
   export let onNavigate: ((page: Page) => void) | undefined = undefined;
   
-  // Estado reactivo del tema
   let darkMode = false;
   
-  // Suscribirse al store de tema
   themeStore.subscribe(value => {
     darkMode = value === 'dark';
   });
   
   function handleThemeToggle() {
+    hapticSelect();
     toggleTheme();
   }
   
   function handleNavigation(page: Page) {
+    hapticSelect();
     if (onNavigate) {
       onNavigate(page);
     } else {
@@ -85,6 +86,7 @@
     right: 0;
     z-index: 100;
     padding: 0.75rem 1rem;
+    padding-top: max(0.75rem, var(--safe-area-top, 0.75rem));
     border-radius: 0;
     border-top: none;
     border-left: none;
@@ -186,8 +188,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 50%;
@@ -203,7 +205,7 @@
   }
 
   .theme-icon {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     line-height: 1;
   }
 

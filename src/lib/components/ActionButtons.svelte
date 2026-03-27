@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { hapticSelect, hapticSuccess, hapticWarning } from '../utils/haptics';
+  
   export let originalPrice: number;
   export let onClear: () => void;
   export let onOpenObservationModal: (action: 'save' | 'share') => void;
@@ -6,26 +8,32 @@
   export let onShowToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
 
   function handleClear() {
+    hapticSelect();
     onClear();
   }
 
   function handleSave() {
     if (originalPrice <= 0) {
+      hapticWarning();
       onShowToast('Ingresa un precio para guardar', 'warning');
       return;
     }
+    hapticSelect();
     onOpenObservationModal('save');
   }
 
   function handleShare() {
     if (originalPrice <= 0) {
+      hapticWarning();
       onShowToast('No hay resultados para compartir', 'warning');
       return;
     }
+    hapticSelect();
     onOpenObservationModal('share');
   }
 
   function handleShowHistory() {
+    hapticSelect();
     onShowHistory();
   }
 </script>
@@ -84,16 +92,16 @@
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-    padding: 0.5rem 0.3rem;
+    padding: 0.6rem 0.4rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: all var(--transition-normal);
     font-weight: 700;
-    min-height: 48px;
+    min-height: 54px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
   
   .btn-icon {
@@ -156,6 +164,7 @@
 
   @media (max-width: 400px) {
     .btn-text { display: none; }
-    .btn-icon { font-size: 1.1rem; }
+    .btn-icon { font-size: 1.4rem; }
+    .action-btn { min-height: 52px; }
   }
 </style>

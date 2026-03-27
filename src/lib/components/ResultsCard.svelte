@@ -161,10 +161,10 @@
 
   .value-group { display: flex; flex-direction: column; align-items: flex-end; }
 
-  .sub-value { font-size: 0.6rem; font-weight: 600; opacity: 0.7; margin-top: 2px; }
+  .sub-value { font-size: 0.75rem; font-weight: 600; opacity: 0.7; margin-top: 2px; }
   
   .result-label {
-    font-size: 0.55rem; color: var(--theme-muted); font-weight: 700;
+    font-size: 0.75rem; color: var(--theme-muted); font-weight: 700;
     text-transform: uppercase; text-align: left; letter-spacing: 0.5px;
   }
   

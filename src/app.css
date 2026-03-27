@@ -26,9 +26,9 @@
   --warning-color: #f59e0b;
   --info-color: #06b6d4;
 
-  /* Tipografía */
-  --font-label: 0.7rem;
-  --font-value: 1rem;
+  /* Tipografía - Optimizado móvil nativo */
+  --font-label: 0.85rem;
+  --font-value: 1.1rem;
   --font-value-large: 1.35rem;
   --weight-label: 700;
   --weight-value: 700;
@@ -76,6 +76,13 @@
 /* ========================================
     Estilos Base - Optimizado para móviles
     ======================================== */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--theme-bg) !important;
@@ -84,14 +91,18 @@ body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  padding-bottom: max(0.5rem, var(--safe-area-bottom));
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: contain;
 }
 
-/* Texto base más legible en móvil */
+/* Texto base más legible en móvil - Optimizado APK */
 html {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 @media (max-width: 400px) {

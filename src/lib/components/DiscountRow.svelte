@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { Discount } from '../types';
   import { formatPercentage, parsePercentage } from '../utils/formatting';
+  import { hapticSelect, hapticWarning } from '../utils/haptics';
   
   export let discount: Discount;
   export let onUpdate: (id: number, percentage: number) => void;
   export let onRemove: (id: number) => void;
   export let onToggle: (id: number) => void;
   
-  // Estado local
   let isEditing = false;
   let displayValue = discount.percentage > 0 ? formatPercentage(discount.percentage) : '0.00%';
   
@@ -23,14 +23,12 @@
   function handleFocus(event: FocusEvent) {
     isEditing = true;
     displayValue = discount.percentage > 0 ? discount.percentage.toString() : '';
-    // Seleccionar todo el texto para reemplazo rápido
     const input = event.target as HTMLInputElement;
     setTimeout(() => input.select(), 0);
   }
   
   function handleBlur() {
     isEditing = false;
-    // Formatear con 2 decimales al perder foco
     if (discount.percentage > 0) {
       displayValue = formatPercentage(discount.percentage);
     } else {
@@ -43,16 +41,24 @@
       (event.target as HTMLInputElement).blur();
     }
   }
+
+  function handleRemove() {
+    hapticWarning();
+    onRemove(discount.id);
+  }
+
+  function handleToggle() {
+    hapticSelect();
+    onToggle(discount.id);
+  }
 </script>
 
 <div class="minimal-tile" class:active={discount.isActive} class:inactive={!discount.isActive}>
-  <!-- Botón eliminar (Solo visible en hover) -->
-  <button class="remove-overlay" on:click={() => onRemove(discount.id)} aria-label="Eliminar">
+  <button class="remove-overlay" on:click={handleRemove} aria-label="Eliminar">
     ✕
   </button>
 
-  <!-- Toggle de estado (Área de clic pequeña) -->
-  <button class="status-indicator" on:click={() => onToggle(discount.id)} aria-label="Cambiar estado">
+  <button class="status-indicator" on:click={handleToggle} aria-label="Cambiar estado">
     <div class="dot"></div>
   </button>
 
@@ -81,7 +87,7 @@
     border-radius: 8px;
     padding: 0.25rem;
     transition: all 0.2s ease;
-    height: 42px;
+    height: 50px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -158,7 +164,7 @@
     padding-right: 4px;
     color: var(--theme-text);
     font-family: var(--g360-font-mono, monospace);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 800;
     outline: none;
   }

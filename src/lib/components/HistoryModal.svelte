@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { HistoryItem } from '../types';
   import { CURRENCY_SYMBOL } from '../types';
+  import { hapticSelect, hapticSuccess, hapticWarning } from '../utils/haptics';
 
   export let onClose: () => void;
   export let onShowToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -33,6 +34,7 @@
   }
 
   function toggleExpand(timestamp: string) {
+    hapticSelect();
     if (expandedItem === timestamp) {
       expandedItem = null;
     } else {
@@ -42,6 +44,7 @@
 
   function handleDelete(item: HistoryItem, event: MouseEvent) {
     event.stopPropagation();
+    hapticWarning();
     try {
       history = history.filter(h => h.timestamp !== item.timestamp);
       localStorage.setItem('g360-history-discount', JSON.stringify(history));
@@ -53,19 +56,31 @@
 
   function handleClearAll(event: MouseEvent) {
     if (history.length === 0) return;
+    hapticWarning();
     if (confirm('¿Eliminar todo el historial?')) {
       localStorage.removeItem('g360-history-discount');
       history = [];
       onShowToast('Historial eliminado', 'success');
     }
   }
+
+  function handleClose() {
+    hapticSelect();
+    onClose();
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      handleClose();
+    }
+  }
 </script>
 
-<div class="modal-overlay" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0">
-  <div class="modal-content" on:click|stopPropagation role="dialog" aria-modal="true">
+<div class="modal-overlay" on:click={handleClose} on:keydown={handleKeydown} role="button" tabindex="0">
+  <div class="modal-content" on:click|stopPropagation on:keydown={handleKeydown} role="dialog" aria-modal="true">
     <div class="modal-header">
       <h2>📋 Historial de Cálculos</h2>
-      <button class="close-btn" on:click={onClose} aria-label="Cerrar">✕</button>
+      <button class="close-btn" on:click={handleClose} aria-label="Cerrar">✕</button>
     </div>
 
     <div class="modal-info">
@@ -200,17 +215,19 @@
 
   .modal-header h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.15rem;
     color: var(--theme-text);
   }
 
   .close-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
     color: var(--theme-muted);
     padding: 0.25rem;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .modal-info {
@@ -220,11 +237,11 @@
     padding: 0.75rem 1rem;
     background: rgba(139, 92, 246, 0.1);
     border-bottom: 1px solid var(--theme-border);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--theme-muted);
   }
 
-  .info-icon { font-size: 1rem; }
+  .info-icon { font-size: 1.2rem; }
 
   .clear-all-btn {
     margin: 0.5rem 1rem;
@@ -345,7 +362,7 @@
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .detail-row.highlight {

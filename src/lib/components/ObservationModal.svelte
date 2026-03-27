@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { hapticSelect, hapticSuccess } from '../utils/haptics';
 
   export let action: 'save' | 'share' = 'save';
   export let onClose: () => void;
@@ -11,12 +12,18 @@
   let inputRef: HTMLTextAreaElement;
 
   function handleSubmit() {
+    hapticSuccess();
     onConfirm({ code, client, observation });
+  }
+
+  function handleClose() {
+    hapticSelect();
+    onClose();
   }
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
-      onClose();
+      handleClose();
     }
   }
 
@@ -27,11 +34,11 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="modal-overlay" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0">
-  <div class="modal-content" on:click|stopPropagation role="dialog" aria-modal="true">
+<div class="modal-overlay" on:click={handleClose} on:keydown={handleKeydown} role="button" tabindex="0">
+  <div class="modal-content" on:click|stopPropagation on:keydown={handleKeydown} role="dialog" aria-modal="true">
     <div class="modal-header">
       <h2>{action === 'save' ? '💾 Guardar Cálculo' : '💬 Compartir por WhatsApp'}</h2>
-      <button class="close-btn" on:click={onClose} aria-label="Cerrar">✕</button>
+      <button class="close-btn" on:click={handleClose} aria-label="Cerrar">✕</button>
     </div>
 
     <div class="modal-body">
@@ -71,7 +78,7 @@
     </div>
 
     <div class="modal-footer">
-      <button class="cancel-btn" on:click={onClose}>Cancelar</button>
+      <button class="cancel-btn" on:click={handleClose}>Cancelar</button>
       <button class="confirm-btn" on:click={handleSubmit}>
         {action === 'save' ? '💾 Guardar' : '💬 Enviar'}
       </button>
@@ -112,17 +119,19 @@
 
   .modal-header h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.15rem;
     color: var(--theme-text);
   }
 
   .close-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
     color: var(--theme-muted);
     padding: 0.25rem;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .modal-body {
@@ -140,7 +149,7 @@
   }
 
   .input-label {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
     color: var(--theme-muted);
@@ -150,13 +159,14 @@
 
   .text-input {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.6rem;
     border: 1px solid var(--theme-border);
     border-radius: 8px;
     background: var(--theme-bg);
     color: var(--theme-text);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-family: inherit;
+    min-height: 44px;
   }
 
   .text-input:focus {
@@ -172,10 +182,10 @@
     border-radius: 8px;
     background: var(--theme-bg);
     color: var(--theme-text);
-    font-size: 0.9rem;
+    font-size: 1rem;
     resize: vertical;
     font-family: inherit;
-    min-height: 80px;
+    min-height: 90px;
     line-height: 1.4;
   }
 
@@ -200,23 +210,27 @@
 
   .cancel-btn {
     flex: 1;
-    padding: 0.75rem;
+    padding: 0.85rem;
     background: var(--theme-bg);
     border: 1px solid var(--theme-border);
     border-radius: 8px;
     color: var(--theme-text);
     font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
+    min-height: 48px;
   }
 
   .confirm-btn {
     flex: 1;
-    padding: 0.75rem;
+    padding: 0.85rem;
     background: linear-gradient(135deg, var(--g360-accent), #b91c1c);
     border: none;
     border-radius: 8px;
     color: white;
     font-weight: 800;
+    font-size: 0.95rem;
     cursor: pointer;
+    min-height: 48px;
   }
 </style>

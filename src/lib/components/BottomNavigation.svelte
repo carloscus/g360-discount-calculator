@@ -1,10 +1,12 @@
 <script lang="ts">
   import type { Page } from '../types';
+  import { hapticSelect } from '../utils/haptics';
 
   export let currentPage: Page = 'home';
   export let onNavigate: ((page: Page) => void) | undefined = undefined;
 
   function handleNavigation(page: Page) {
+    hapticSelect();
     if (onNavigate) {
       onNavigate(page);
     }
@@ -43,6 +45,7 @@
     right: 0;
     z-index: 100;
     padding: 0.6rem 0.75rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom, 0.6rem));
     border-radius: 0;
     border-top: 1px solid var(--theme-border);
     border-left: none;
@@ -79,10 +82,20 @@
     color: var(--theme-muted);
     cursor: pointer;
     transition: all var(--transition-fast);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 600;
     min-width: 90px;
-    min-height: 48px;
+    min-height: 56px;
+  }
+
+  .nav-icon {
+    font-size: 1.4rem;
+  }
+  
+  .nav-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1;
   }
 
   .nav-btn:hover {

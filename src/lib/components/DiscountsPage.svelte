@@ -8,6 +8,7 @@
   import ActionButtons from './ActionButtons.svelte';
   import HistoryModal from './HistoryModal.svelte';
   import ObservationModal from './ObservationModal.svelte';
+  import { hapticSelect, hapticSuccess, hapticWarning } from '../utils/haptics';
   
   export let onShowToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
   
@@ -71,13 +72,16 @@
   
   function handleAddDiscount() {
     if (hasTargetPrice) {
+      hapticWarning();
       onShowToast('Con precio objetivo, solo se calcula el descuento necesario', 'info');
       return;
     }
     if (!canAddMoreDiscounts) {
+      hapticWarning();
       onShowToast(`Máximo ${MAX_DISCOUNTS} descuentos permitidos`, 'warning');
       return;
     }
+    hapticSuccess();
     discountStore.addDiscount(0);
     onShowToast('Descuento agregado', 'success');
   }
@@ -185,37 +189,37 @@
     const hora = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
     const finalConIGV = results.finalPrice * 1.18;
     
-    let message = `📊 *DESCUENTO REAL* - ${fecha}\n`;
-    message += `─────────────────────\n`;
+    let message = `💰 *CALCULO DE DESCUENTO* 💰\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
     
-    if (clientCode) message += `🔢 Código: ${clientCode}\n`;
+    if (clientCode) message += `📋 Codigo: ${clientCode}\n`;
     if (clientName) message += `👤 Cliente: ${clientName}\n`;
     
     if (hasTargetPrice) {
-      message += `💰 Precio orig: S/ ${originalPrice.toFixed(2)}\n`;
-      message += `🎯 Precio objetivo: S/ ${targetPrice.toFixed(2)}\n`;
-      message += `📉 *Dscto necesario: ${requiredDiscount.toFixed(1)}%*\n`;
-      message += `─────────────────────\n`;
-      message += `💵 *Final: S/ ${targetPrice.toFixed(2)}*\n`;
-      message += `💵 c/IGV: S/ ${(targetPrice * 1.18).toFixed(2)}\n`;
+      message += `💵 Precio Original: S/ ${originalPrice.toFixed(2)}\n`;
+      message += `🎯 Precio Objetivo: S/ ${targetPrice.toFixed(2)}\n`;
+      message += `📉 *DESCUENTO REQ: ${requiredDiscount.toFixed(1)}%*\n`;
+      message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `✅ *PRECIO FINAL: S/ ${targetPrice.toFixed(2)}*\n`;
+      message += `🧾 + IGV (18%): S/ ${(targetPrice * 1.18).toFixed(2)}\n`;
     } else {
       const activeDiscounts = discounts.filter(d => d.isActive);
-      const discountLabels = activeDiscounts.map(d => `${d.percentage}%`).join(' - ');
-      message += `💰 Precio: S/ ${originalPrice.toFixed(2)}\n`;
+      const discountLabels = activeDiscounts.map(d => `${d.percentage}%`).join(' + ');
+      message += `💵 Precio Inicial: S/ ${originalPrice.toFixed(2)}\n`;
       if (discountLabels) {
         message += `📉 Descuentos: ${discountLabels}\n`;
       }
-      message += `─────────────────────\n`;
-      message += `💵 *Final: S/ ${results.finalPrice.toFixed(2)}*\n`;
-      message += `💵 c/IGV: S/ ${finalConIGV.toFixed(2)}\n`;
+      message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `✅ *PRECIO FINAL: S/ ${results.finalPrice.toFixed(2)}*\n`;
+      message += `🧾 + IGV (18%): S/ ${finalConIGV.toFixed(2)}\n`;
     }
     
     if (observation) {
-      message += `📝 Obs: ${observation}\n`;
+      message += `📝 Nota: ${observation}\n`;
     }
     
-    message += `─────────────────────\n`;
-    message += `_G360 | ${hora}_`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔗 G360 Calculator | ${hora}`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -324,7 +328,7 @@
   .inputs-grid { display: flex; justify-content: center; width: 100%; }
   .input-group.full-width { width: 100%; max-width: 350px; }
   
-  .input-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--theme-muted); margin-bottom: 0.25rem; display: block; }
+  .input-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--theme-muted); margin-bottom: 0.25rem; display: block; }
   
   :global(.price-input-container.compact) {
     margin: 0;
@@ -345,7 +349,7 @@
     border: none; border-radius: 8px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
   }
 
-  .section-header h3 { font-size: 0.8rem; margin: 0 0 0.5rem 0; font-weight: 800; text-transform: uppercase; }
+  .section-header h3 { font-size: 0.9rem; margin: 0 0 0.5rem 0; font-weight: 800; text-transform: uppercase; }
   .section-header .count { color: var(--g360-accent); }
 
   .discounts-list { 
@@ -399,7 +403,7 @@
   }
 
   .add-text {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     color: var(--theme-muted);
     text-transform: uppercase;
   }
@@ -423,14 +427,14 @@
   }
 
   .indicator-text {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 800;
     color: #8b5cf6;
     text-transform: uppercase;
   }
 
   .indicator-hint {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     color: var(--theme-muted);
     margin-top: 0.25rem;
   }
@@ -466,9 +470,9 @@
     margin-bottom: 0.5rem;
   }
 
-  .target-icon { font-size: 1rem; }
+  .target-icon { font-size: 1.2rem; }
   .target-title {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
     color: #8b5cf6;
