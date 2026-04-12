@@ -34,7 +34,7 @@
       <div class="logo-wrapper">
         <div class="logo-backlight"></div>
         <img 
-          src={darkMode ? '/g360-discount-calculator/logo-g360.svg' : '/g360-discount-calculator/logo-g360-light.svg'} 
+          src={darkMode ? '/logo-g360.svg' : '/logo-g360-light.svg'} 
           alt="G360 Logo" 
           class="logo"
         />
