@@ -115,7 +115,7 @@
     transform: translateX(-50%);
     background: #ef4444;
     color: white;
-    font-size: 0.5rem;
+    font-size: 0.55rem;
     font-weight: 700;
     padding: 1px 4px;
     border-radius: 4px;

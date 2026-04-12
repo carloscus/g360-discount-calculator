@@ -106,7 +106,7 @@
     .main-content {
       padding: 0.25rem;
       padding-top: 65px;
-      padding-bottom: 5px;
+      padding-bottom: 85px;
     }
   }
 

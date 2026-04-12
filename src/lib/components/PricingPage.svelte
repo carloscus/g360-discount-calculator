@@ -30,6 +30,29 @@
   let costFocused = false;
   let priceFocused = false;
 
+  let costError = '';
+  let marginError = '';
+  let markupError = '';
+  let priceError = '';
+
+  function validateCost(value: number): string {
+    if (value <= 0) return 'Ingrese costo';
+    if (value > 999999.99) return 'Máx: 999,999.99';
+    return '';
+  }
+
+  function validatePercentage(value: number, max: number = 99.99): string {
+    if (value <= 0) return 'Ingrese valor';
+    if (value > max) return `Máx: ${max}%`;
+    return '';
+  }
+
+  function validatePrice(value: number): string {
+    if (value <= 0) return 'Ingrese precio';
+    if (value > 999999.99) return 'Máx: 999,999.99';
+    return '';
+  }
+
   // Suscribirse a los stores
   pricingStore.subscribe(state => {
     mode = state.mode;
@@ -64,6 +87,7 @@
   function handleCostBlur() {
     costFocused = false;
     costInputValue = getDisplayValue(cost, inputModeIGV, false);
+    costError = validateCost(cost);
   }
 
   function handlePriceFocus(event: FocusEvent) {
@@ -75,6 +99,12 @@
   function handlePriceBlur() {
     priceFocused = false;
     priceInputValue = getDisplayValue(price, inputModeIGV, false);
+    priceError = validatePrice(price);
+  }
+
+  function handleFocus(event: FocusEvent) {
+    const target = event.target as HTMLInputElement;
+    setTimeout(() => target.select(), 0);
   }
 
   // Funciones de manejo
@@ -99,27 +129,30 @@
 
   function handleCostInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    pricingStore.setCost(processValue(target.value));
+    const val = processValue(target.value);
+    pricingStore.setCost(val);
+    costError = validateCost(val);
   }
 
   function handleMarginInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    pricingStore.setMargin(parseNumber(target.value.replace(/[^\d.]/g, '')));
+    const val = parseNumber(target.value.replace(/[^\d.]/g, ''));
+    pricingStore.setMargin(val);
+    marginError = validatePercentage(val, 99.99);
   }
 
   function handleMarkupInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    pricingStore.setMarkup(parseNumber(target.value.replace(/[^\d.]/g, '')));
+    const val = parseNumber(target.value.replace(/[^\d.]/g, ''));
+    pricingStore.setMarkup(val);
+    markupError = validatePercentage(val);
   }
 
   function handlePriceInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    pricingStore.setPrice(processValue(target.value));
-  }
-
-  function handleFocus(event: FocusEvent) {
-    const target = event.target as HTMLInputElement;
-    setTimeout(() => target.select(), 0);
+    const val = processValue(target.value);
+    pricingStore.setPrice(val);
+    priceError = validatePrice(val);
   }
 
   function handleShareWhatsApp() {
@@ -201,6 +234,7 @@
           <input
             type="text"
             class="price-input"
+            class:invalid={!!costError}
             placeholder="0.00"
             bind:value={costInputValue}
             on:input={handleCostInput}
@@ -209,7 +243,9 @@
             inputmode="decimal"
           />
         </div>
-        {#if inputModeIGV && cost > 0}
+        {#if costError}
+          <span class="input-error-text">{costError}</span>
+        {:else if inputModeIGV && cost > 0}
           <span class="neto-hint">Neto: {formatCurrency(cost)}</span>
         {/if}
       </div>
@@ -222,6 +258,7 @@
             <input
               type="text"
               class="percentage-input"
+              class:invalid={!!marginError}
               placeholder="0"
               value={margin > 0 ? margin.toString() : ''}
               on:input={handleMarginInput}
@@ -230,12 +267,14 @@
             />
             <span class="percentage-suffix">%</span>
           </div>
+          {#if marginError}<span class="input-error-text">{marginError}</span>{/if}
         {:else if mode === 'markup'}
           <label class="input-label">📈 Markup %</label>
           <div class="input-wrapper">
             <input
               type="text"
               class="percentage-input"
+              class:invalid={!!markupError}
               placeholder="0"
               value={markup > 0 ? markup.toString() : ''}
               on:input={handleMarkupInput}
@@ -244,6 +283,7 @@
             />
             <span class="percentage-suffix">%</span>
           </div>
+          {#if markupError}<span class="input-error-text">{markupError}</span>{/if}
         {:else}
           <label class="input-label">💵 Venta {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
           <div class="input-wrapper">
@@ -251,6 +291,7 @@
           <input
             type="text"
             class="price-input"
+            class:invalid={!!priceError}
             placeholder="0.00"
             bind:value={priceInputValue}
             on:input={handlePriceInput}
@@ -259,7 +300,9 @@
             inputmode="decimal"
           />
           </div>
-          {#if inputModeIGV && price > 0}
+          {#if priceError}
+            <span class="input-error-text">{priceError}</span>
+          {:else if inputModeIGV && price > 0}
             <span class="neto-hint">Neto: {formatCurrency(price)}</span>
           {/if}
         {/if}
@@ -279,7 +322,7 @@
 <style>
   .pricing-page { max-width: 800px; margin: 0 auto; padding: 0 0.75rem; }
   
-  .top-bar { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .top-bar { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; overflow-x: auto; }
   .top-bar :global(.segmented-capsule) { flex: 1; margin-bottom: 0; }
 
   .toggle-mode-btn {
@@ -314,10 +357,12 @@
 
   .percentage-input { padding-left: 0.7rem; padding-right: 1.9rem; }
   .price-input:focus, .percentage-input:focus { border-color: var(--g360-accent); box-shadow: var(--neon-glow); }
+  .price-input.invalid, .percentage-input.invalid { border-color: var(--danger-color); box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
+  .input-error-text { font-size: 0.6rem; color: var(--danger-color); font-weight: 600; margin-top: 2px; display: block; }
 
   .neto-hint { font-size: 0.6rem; color: var(--g360-accent); font-weight: 600; text-align: right; margin-top: 3px; display: block; }
 
-  .action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.35rem; margin-top: 1rem; margin-bottom: 1rem; }
+  .action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.35rem; margin-top: 1rem; margin-bottom: 1rem; overflow-x: auto; }
   .action-btn { 
     display: flex; align-items: center; justify-content: center; gap: 0.4rem;
     min-height: 52px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;

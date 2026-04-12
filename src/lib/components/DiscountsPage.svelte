@@ -376,6 +376,7 @@
     gap: 0.3rem; 
     max-height: 300px; 
     overflow-y: auto; 
+    overflow-x: auto;
     padding: 0.25rem;
   }
 

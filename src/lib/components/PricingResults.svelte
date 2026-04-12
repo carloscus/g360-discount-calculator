@@ -105,10 +105,10 @@
 
   .value-group { display: flex; flex-direction: column; align-items: flex-end; }
 
-  .sub-value { font-size: 0.6rem; font-weight: 600; opacity: 0.6; margin-top: -1px; }
+  .sub-value { font-size: 0.65rem; font-weight: 600; opacity: 0.6; margin-top: -1px; }
   
   .result-label {
-    font-size: 0.55rem; color: var(--theme-muted); font-weight: 700;
+    font-size: 0.6rem; color: var(--theme-muted); font-weight: 700;
     text-transform: uppercase; text-align: left; letter-spacing: 0.3px;
   }
   
@@ -128,9 +128,9 @@
   @media (max-width: 600px) {
     .results-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; }
     .result-tile { padding: 0.5rem; min-height: 56px; }
-    .result-label { font-size: 0.5rem; }
+    .result-label { font-size: 0.55rem; }
     .result-value { font-size: 0.85rem; }
-    .sub-value { font-size: 0.5rem; }
+    .sub-value { font-size: 0.55rem; }
     .final-text { font-size: 0.95rem; }
   }
 
