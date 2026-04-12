@@ -2,7 +2,7 @@
   import { themeStore, toggleTheme, isDarkMode } from '../stores/theme';
   import type { Page } from '../types';
   import { goto } from '$app/navigation';
-  
+  import { base } from '$app/paths';
   export let currentPage: Page = 'home';
   export let onNavigate: ((page: Page) => void) | undefined = undefined;
   
@@ -34,7 +34,7 @@
       <div class="logo-wrapper">
         <div class="logo-backlight"></div>
         <img 
-          src={darkMode ? '/logo-g360.svg' : '/logo-g360-light.svg'} 
+          src={darkMode ? `${base}/logo-g360.svg` : `${base}/logo-g360-light.svg`} 
           alt="G360 Logo" 
           class="logo"
         />
