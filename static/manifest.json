@@ -1,0 +1,42 @@
+{
+  "name": "G360 Calculadora de Descuentos",
+  "short_name": "G360 Dctos",
+  "description": "Calculadora de descuentos consecutivos con IVA peruano",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#00d084",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["finance", "business", "utilities"],
+  "lang": "es-PE",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "screenshots": [],
+  "shortcuts": []
+}
