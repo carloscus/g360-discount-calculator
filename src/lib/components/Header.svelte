@@ -22,7 +22,7 @@
     if (onNavigate) {
       onNavigate(page);
     } else {
-      goto(page === 'pricing' ? '/pricing' : '/');
+      goto(page === 'pricing' ? `${base}/pricing` : base);
     }
   }
 </script>

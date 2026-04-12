@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   server: {
     port: 5173,
-    host: true
+    host: true,
+    fs: {
+      allow: ['..']
+    }
   },
-  base: process.env.NODE_ENV === 'production' ? '/g360-discount-calculator/' : '/'
+  base: '/g360-discount-calculator/'
 });
