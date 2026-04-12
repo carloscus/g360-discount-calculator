@@ -33,6 +33,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify build
+        run: |
+          if ! grep -q 'base: "/g360-discount-calculator"' build/index.html; then
+            echo "Base path not found in build/index.html"
+            exit 1
+          fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
