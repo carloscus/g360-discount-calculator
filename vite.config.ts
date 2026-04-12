@@ -8,5 +8,5 @@ export default defineConfig({
     port: 5173,
     host: true
   },
-  base: '/g360-discount-calculator/'
+  base: process.env.NODE_ENV === 'production' ? '/g360-discount-calculator/' : '/'
 });
