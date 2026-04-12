@@ -14,7 +14,7 @@ const config = {
       strict: true
     }),
     paths: {
-      base: process.env.NODE_ENV === 'production' ? '/g360-discount-calculator' : ''
+      base: '/g360-discount-calculator'
     },
     prerender: {
       entries: ['*']
