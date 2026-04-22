@@ -13,6 +13,8 @@
 - **Compartir Historial** - Exporta historial por WhatsApp/TXT
 - **IVA Peruano** - IGV del 18% incluido
 - **Precio Objetivo** - Calcula descuento necesario
+- **🧮 Calculadora Rápida IGV** - Modal flotante agregar/quitar IGV 18%
+- **Pestaña Lateral Móvil** - Acceso rápido siempre visible
 - **Modo Oscuro/Claro** - Tema G360 con neón
 - **Responsive Short Screen** - Pantallas ≤400px altura
 - **PWA** - Instalable como app nativa
@@ -369,6 +371,19 @@ npx gh-pages -d build -t true
 - Cualquier servidor estático
 
 ## 📋 Changelog
+
+### v2.3.0 (2026-04-21)
+- ✨ **Calculadora Rápida IGV** - Modal compacto centrado
+- ✨ **Pestaña lateral flotante** para móviles
+- ✨ Copia automática al portapapeles con un click
+- ✨ Modo precio objetivo oculta sección descuentos
+- 🐛 Corregido bug reconocimiento precio 10.00
+- 🐛 Corregidos errores TypeScript en cálculos
+- 🎨 Tamaño botones optimizado para touch 48px
+- 🎨 Animación pulse suave en botón IGV
+- 🎨 Modal compacto tamaño justo
+- ⚡ Optimizaciones PWA para pantallas pequeñas
+- ⚡ Auditoría código completada
 
 ### v2.2.0 (2026-04-11)
 - ✨ Dual Guardar + WhatsApp en un paso

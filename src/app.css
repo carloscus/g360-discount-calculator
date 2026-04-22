@@ -63,6 +63,15 @@
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Variables de respaldo (Fallback) para evitar pantalla en blanco */
+  --theme-bg: var(--g360-bg);
+  --theme-surface: var(--g360-surface);
+  --theme-text: var(--g360-text);
+  --theme-muted: var(--g360-muted);
+  --theme-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(21, 30, 46, 0.7);
+  --glass-border: rgba(0, 208, 132, 0.2);
 }
 
 /* ========================================

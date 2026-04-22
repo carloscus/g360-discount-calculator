@@ -9,6 +9,7 @@
 
 import type { Discount, DiscountResult, PricingResult } from '../types';
 import { IVA_RATE } from '../types';
+import { parseNumber } from './formatting';
 
 // ========================================
 // Cálculos de Descuentos Sin Precio Original
@@ -24,20 +25,26 @@ import { IVA_RATE } from '../types';
 export function calculateEffectiveDiscount(discounts: Discount[], originalPrice: number = 100): number {
   const activeDiscounts = discounts.filter(d => d.isActive && d.percentage > 0);
   
-  if (activeDiscounts.length === 0 || originalPrice <= 0) {
+  if (!discounts || activeDiscounts.length === 0) {
     return 0;
   }
 
-  // Calcular precio final aplicando descuentos consecutivamente
-  let finalPrice = originalPrice;
-  for (const discount of activeDiscounts) {
-    finalPrice *= (1 - discount.percentage / 100);
+  // Usamos el precio original si existe, sino una base de 100 para el porcentaje
+  // Limpieza agresiva por si llega como string formateado
+  let rawPrice = originalPrice;
+  if (typeof rawPrice === 'string') {
+    rawPrice = parseNumber(rawPrice);
   }
   
-  // Descuento efectivo = (original - final) / original * 100
-  const savings = originalPrice - finalPrice;
-  const effectiveDiscount = (savings / originalPrice) * 100;
+  const priceNum = Number(rawPrice);
+  const base = (!isNaN(priceNum) && priceNum > 0) ? priceNum : 100;
+  let currentPrice = base;
+
+  for (const discount of activeDiscounts) {
+    currentPrice *= (1 - discount.percentage / 100);
+  }
   
+  const effectiveDiscount = ((base - currentPrice) / base) * 100;
   return Math.round(effectiveDiscount * 100) / 100;
 }
 
@@ -84,34 +91,38 @@ export function calculateConsecutiveDiscounts(
   originalPrice: number,
   discounts: Discount[]
 ): DiscountResult {
-  if (originalPrice <= 0) {
-    return {
-      originalPrice: 0,
-      effectiveDiscount: 0,
-      exactEffectiveDiscount: 0,
-      finalPrice: 0,
-      savings: 0
-    };
-  }
+  // Sanitizar el precio original
+  // Nos aseguramos de que sea un número, incluso si llega como string del store
+  const priceNum = typeof originalPrice === 'string' 
+    ? parseNumber(originalPrice) 
+    : Number(originalPrice);
 
-  let currentPrice = originalPrice;
+  const price = isNaN(priceNum) ? 0 : priceNum;
+  
+  // Usamos una base de 100 para calcular el porcentaje de descuento efectivo 
+  // independientemente de si se proporciona un precio original o no.
+  const calcBase = 100;
+  let priceOnBase = calcBase;
   
   // Aplicar cada descuento consecutivamente
   for (const discount of discounts) {
     if (discount.isActive && discount.percentage > 0) {
-      currentPrice *= (1 - discount.percentage / 100);
+      priceOnBase *= (1 - discount.percentage / 100);
     }
   }
 
-  const savings = originalPrice - currentPrice;
-  const effectiveDiscount = (savings / originalPrice) * 100;
+  const effectiveDiscount = ((calcBase - priceOnBase) / calcBase) * 100;
+  
+  // Calculamos el precio final y ahorro real solo si hay un precio original válido
+  const finalPrice = price > 0 ? (price * (priceOnBase / calcBase)) : 0;
+  const realSavings = price > 0 ? price - finalPrice : 0;
 
   return {
-    originalPrice,
+    originalPrice: price,
     effectiveDiscount: Math.round(effectiveDiscount * 100) / 100,
     exactEffectiveDiscount: effectiveDiscount,
-    finalPrice: Math.round(currentPrice * 100) / 100,
-    savings: Math.round(savings * 100) / 100
+    finalPrice: Math.round(finalPrice * 100) / 100,
+    savings: Math.round(realSavings * 100) / 100
   };
 }
 
@@ -211,7 +222,10 @@ export function calculatePricingResults(
   const grossMargin = calculateMargin(cost, sellingPrice);
   const markup = calculateMarkup(cost, sellingPrice);
   const ivaAmount = calculateIVAAmount(sellingPrice);
-  const finalPrice = includeIVA ? addIVA(sellingPrice) : sellingPrice;
+
+  // El precio final para el análisis de venta siempre debe incluir IGV 
+  // para ser consistente con los labels de la interfaz (+IGV).
+  const finalPrice = addIVA(sellingPrice); 
   const grossProfit = sellingPrice - cost;
 
   return {

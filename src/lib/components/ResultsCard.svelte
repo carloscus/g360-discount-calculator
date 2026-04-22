@@ -18,7 +18,7 @@
   $: priceWithIGV = finalPrice * (1 + IVA_RATE);
   $: igvAmount = finalPrice * IVA_RATE;
   $: hasResults = hasTargetPrice ? targetPrice > 0 : (hasDiscounts || effectiveDiscountPercent > 0);
-  $: showEffectiveDiscount = !hasTargetPrice && effectiveDiscountPercent > 0;
+  $: showEffectiveDiscount = !hasTargetPrice && effectiveDiscountPercent > 0 && results.originalPrice <= 0;
   $: discountLabels = discounts?.filter(d => d.isActive && d.percentage > 0).map(d => `${d.percentage}%`).join(' + ') || '';
 </script>
 

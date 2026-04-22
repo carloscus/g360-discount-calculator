@@ -11,6 +11,7 @@ import { writable, derived, get } from 'svelte/store';
 import type { Discount, DiscountResult } from '../types';
 import { MAX_DISCOUNTS } from '../types';
 import { calculateConsecutiveDiscounts } from '../utils/calculations';
+import { parseNumber } from '../utils/formatting';
 import { browser } from '$app/environment';
 
 // ========================================
@@ -32,18 +33,28 @@ function createDiscountStore() {
     discounts: Discount[];
   }>(initialState);
 
-  // Guardar en localStorage cuando cambie el estado
-  let currentState = initialState;
-  
   return {
     subscribe,
     
     /**
      * Establece el precio original
      */
-    setOriginalPrice: (price: number) => {
+    setOriginalPrice: (price: any) => {
       update(state => {
-        const newState = { ...state, originalPrice: price };
+        // Robustez: Extraer valor si es un evento o un objeto
+        let rawValue: any = price;
+        
+        if (price && typeof price === 'object' && 'target' in price) {
+          rawValue = (price.target as HTMLInputElement).value;
+        } else if (price && typeof price === 'object' && 'value' in price) {
+          rawValue = price.value;
+        }
+
+        // Sanitización garantizada: Convertimos a string y usamos parseNumber para limpiar "S/" y otros
+        const valueToParse = (rawValue !== null && rawValue !== undefined) ? String(rawValue) : '0';
+        const parsed = parseNumber(valueToParse);
+        
+        const newState = { ...state, originalPrice: parsed };
         saveToStorage(newState);
         return newState;
       });
