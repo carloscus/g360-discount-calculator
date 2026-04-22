@@ -369,6 +369,11 @@
             bind:value={igvModalValue}
             inputmode="decimal"
             placeholder="0.00"
+            on:input={() => {
+              if(igvModalValue === '' || igvModalValue === '0') {
+                igvModalResult = 0;
+              }
+            }}
             on:keydown={(e) => {
               if(e.key === 'Enter') calculateIgvRemove();
             }}
