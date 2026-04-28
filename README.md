@@ -1,8 +1,31 @@
 # G360 Descuentos - Calculadora de Descuentos Consecutivos
 
+> Aplicación web progresiva (PWA) para calcular descuentos consecutivos y precios de venta con margen/markup. Forma parte de la familia de microherramientas G360 para apoyo CRM y gestión de datos en escritorio.
+
+[![npm version](https://img.shields.io/npm/v/g360-discount-calculator)](https://www.npmjs.com/package/g360-discount-calculator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
+## Tabla de Contenidos
+
+- [Descripción](#descripción)
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Estructura](#estructura-del-proyecto)
+- [Scripts](#scripts)
+- [Desarrollo](#desarrollo)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+- [Familia G360](#familia-g360)
+
+---
+
 ## 📊 Descripción
 
-**G360 Descuentos** es una aplicación web progresiva (PWA) para calcular descuentos consecutivos y precios de venta con margen/markup. Desarrollada con **SvelteKit 5 + TypeScript + Tailwind v4** como parte del ecosistema G360.
+**G360 Descuentos** es una aplicación web progresiva (PWA) para calcular descuentos consecutivos y precios de venta con margen/markup. Desarrollada con **SvelteKit 5 + TypeScript + Tailwind v4** como parte de la familia de microherramientas G360.
 
 ### Características Principales
 
@@ -409,20 +432,32 @@ npx gh-pages -d build -t true
 
 ## 👨‍💻 Autor
 
-**Carlos Cusi (CCUSI)**
-- Ecosistema: G360
-- Año: 2026
+**Carlos Cusi (CCUSI)** - Año: 2026
 
 ## 📄 Licencia
 
-© 2026 G360 Ecosystem. Todos los derechos reservados.
+MIT License - ver [LICENSE](LICENSE) para más detalles.
 
 ## 🔗 Enlaces
 
-- [G360 Ecosystem](https://g360.com)
-- [Documentación G360](https://docs.g360.com)
 - [Repositorio](https://github.com/carloscus/g360-discount-calculator)
+- [Paquete npm](https://www.npmjs.com/package/g360-discount-calculator)
 
 ---
 
-**Powered by G360 | CCUSI 2026**
+## Familia G360
+
+Este proyecto forma parte de la familia de microherramientas **G360** para apoyo CRM y gestión de datos en escritorio, enfocadas en áreas como ventas, finanzas y logística.
+
+### Herramientas Relacionadas
+
+- **[g360-cli](https://github.com/carloscus/g360-cli)**: Bootstrap de proyectos G360
+- **[g360-signature](https://github.com/carloscus/g360-signature)**: Web component de branding G360
+- **[g360-order-xlsx](https://github.com/carloscus/g360-order-xlsx)**: Procesador de cotizaciones Excel
+
+---
+**Marca**: G360
+**Isotipo**: 3 puntos verticales paralelos (gris-verde-gris) + chevron `>`
+**Autor**: Carlos Cusi
+**Desarrollo**: Con asistencia de herramientas de código IA (Vibe Code)
+**Powered by**: [g360-signature](https://github.com/carloscus/g360-signature)
