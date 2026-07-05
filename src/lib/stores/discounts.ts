@@ -39,18 +39,19 @@ function createDiscountStore() {
     /**
      * Establece el precio original
      */
-    setOriginalPrice: (price: any) => {
+    setOriginalPrice: (price: unknown) => {
       update(state => {
-        // Robustez: Extraer valor si es un evento o un objeto
-        let rawValue: any = price;
+        // Extraer valor si es un evento o un objeto con value
+        let rawValue: unknown = price;
         
         if (price && typeof price === 'object' && 'target' in price) {
-          rawValue = (price.target as HTMLInputElement).value;
+          const eventObj = price as { target: HTMLInputElement };
+          rawValue = eventObj.target?.value;
         } else if (price && typeof price === 'object' && 'value' in price) {
-          rawValue = price.value;
+          const valueObj = price as { value: unknown };
+          rawValue = valueObj.value;
         }
 
-        // Sanitización garantizada: Convertimos a string y usamos parseNumber para limpiar "S/" y otros
         const valueToParse = (rawValue !== null && rawValue !== undefined) ? String(rawValue) : '0';
         const parsed = parseNumber(valueToParse);
         

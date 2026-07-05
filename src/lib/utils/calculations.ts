@@ -44,8 +44,8 @@ export function calculateEffectiveDiscount(discounts: Discount[], originalPrice:
     currentPrice *= (1 - discount.percentage / 100);
   }
   
-  const effectiveDiscount = ((base - currentPrice) / base) * 100;
-  return Math.round(effectiveDiscount * 100) / 100;
+   const effectiveDiscount = ((base - currentPrice) / base) * 100;
+   return roundToDecimals(effectiveDiscount, 2);
 }
 
 /**
@@ -71,11 +71,11 @@ export function calculateTotalEffectiveDiscount(discountPercentages: number | nu
       finalPrice *= (1 - discount / 100);
     }
   }
-  
-  const effectiveDiscount = basePrice - finalPrice;
-  
-  return Math.round(effectiveDiscount * 100) / 100;
-}
+   
+   const effectiveDiscount = basePrice - finalPrice;
+   
+   return roundToDecimals(effectiveDiscount, 2);
+ }
 
 // ========================================
 // Cálculos de Descuentos Consecutivos
@@ -115,15 +115,15 @@ export function calculateConsecutiveDiscounts(
   
   // Calculamos el precio final y ahorro real solo si hay un precio original válido
   const finalPrice = price > 0 ? (price * (priceOnBase / calcBase)) : 0;
-  const realSavings = price > 0 ? price - finalPrice : 0;
+   const realSavings = price > 0 ? price - finalPrice : 0;
 
-  return {
-    originalPrice: price,
-    effectiveDiscount: Math.round(effectiveDiscount * 100) / 100,
-    exactEffectiveDiscount: effectiveDiscount,
-    finalPrice: Math.round(finalPrice * 100) / 100,
-    savings: Math.round(realSavings * 100) / 100
-  };
+   return {
+     originalPrice: price,
+     effectiveDiscount: roundToDecimals(effectiveDiscount, 2),
+     exactEffectiveDiscount: effectiveDiscount,
+     finalPrice: roundToDecimals(finalPrice, 2),
+     savings: roundToDecimals(realSavings, 2)
+   };
 }
 
 /**
@@ -226,16 +226,16 @@ export function calculatePricingResults(
   // El precio final para el análisis de venta siempre debe incluir IGV 
   // para ser consistente con los labels de la interfaz (+IGV).
   const finalPrice = addIVA(sellingPrice); 
-  const grossProfit = sellingPrice - cost;
+   const grossProfit = sellingPrice - cost;
 
-  return {
-    sellingPrice: Math.round(sellingPrice * 100) / 100,
-    grossMargin: Math.round(grossMargin * 100) / 100,
-    markup: Math.round(markup * 100) / 100,
-    ivaAmount: Math.round(ivaAmount * 100) / 100,
-    finalPrice: Math.round(finalPrice * 100) / 100,
-    grossProfit: Math.round(grossProfit * 100) / 100
-  };
+   return {
+     sellingPrice: roundToDecimals(sellingPrice, 2),
+     grossMargin: roundToDecimals(grossMargin, 2),
+     markup: roundToDecimals(markup, 2),
+     ivaAmount: roundToDecimals(ivaAmount, 2),
+     finalPrice: roundToDecimals(finalPrice, 2),
+     grossProfit: roundToDecimals(grossProfit, 2)
+   };
 }
 
 // ========================================

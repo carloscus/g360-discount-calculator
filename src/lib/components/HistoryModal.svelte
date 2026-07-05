@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { HistoryItem } from '../types';
-  import { CURRENCY_SYMBOL } from '../types';
+  import { CURRENCY_SYMBOL, IVA_RATE } from '../types';
   import { shareDiscountHistory, copyHistoryToClipboard, generateDiscountHistoryText, generateWhatsAppURL, copyToClipboard } from '../utils/sharing';
 
   export let onClose: () => void;
@@ -22,6 +22,7 @@
         filteredHistory = history;
       }
     } catch (e) {
+      console.error('Error cargando historial de descuentos:', e);
       history = [];
       filteredHistory = [];
     }
@@ -275,10 +276,10 @@
                 <span class="item-date">{formatDate(item.timestamp)}</span>
               </div>
               <div class="summary-right">
-                <div class="price-with-igv">
-                  <span class="item-price-net">{CURRENCY_SYMBOL} {item.targetPrice ? item.targetPrice.toFixed(2) : item.results?.finalPrice?.toFixed(2)}</span>
-                  <span class="item-price-igv">({CURRENCY_SYMBOL}{((item.targetPrice || item.results?.finalPrice) * 1.18)?.toFixed(2)})</span>
-                </div>
+                 <div class="price-with-igv">
+                   <span class="item-price-net">{CURRENCY_SYMBOL} {item.targetPrice ? item.targetPrice.toFixed(2) : item.results?.finalPrice?.toFixed(2)}</span>
+                   <span class="item-price-igv">({CURRENCY_SYMBOL}{((item.targetPrice || item.results?.finalPrice) * (1 + IVA_RATE))?.toFixed(2)})</span>
+                 </div>
                 <span class="expand-icon">{expandedItem === item.timestamp ? '▲' : '▼'}</span>
               </div>
             </div>
@@ -298,10 +299,10 @@
                     <span class="label">📉 Descuento:</span>
                     <span class="value highlight">{item.requiredDiscount?.toFixed(1)}%</span>
                   </div>
-                  <div class="detail-row">
-                    <span class="label">💵 c/IGV (18%):</span>
-                    <span class="value igv">{CURRENCY_SYMBOL} {((item.targetPrice ?? 0) * 1.18).toFixed(2)}</span>
-                  </div>
+                   <div class="detail-row">
+                     <span class="label">💵 c/IGV (18%):</span>
+                     <span class="value igv">{CURRENCY_SYMBOL} {((item.targetPrice ?? 0) * (1 + IVA_RATE)).toFixed(2)}</span>
+                   </div>
                 {:else}
                   <div class="detail-row">
                     <span class="label">💰 Precio Original:</span>
@@ -317,10 +318,10 @@
                     <span class="label">💵 Precio Final:</span>
                     <span class="value highlight">{CURRENCY_SYMBOL} {item.results?.finalPrice?.toFixed(2)}</span>
                   </div>
-                  <div class="detail-row">
-                    <span class="label">💵 c/IGV (18%):</span>
-                    <span class="value igv">{CURRENCY_SYMBOL} {(item.results?.finalPrice * 1.18)?.toFixed(2)}</span>
-                  </div>
+                   <div class="detail-row">
+                     <span class="label">💵 c/IGV (18%):</span>
+                     <span class="value igv">{CURRENCY_SYMBOL} {(item.results?.finalPrice * (1 + IVA_RATE))?.toFixed(2)}</span>
+                   </div>
                 {/if}
                 {#if item.observation}
                   <div class="detail-row observation">

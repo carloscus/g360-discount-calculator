@@ -177,57 +177,60 @@
       fromWSP: alsoShare
     };
     
-    try {
-      const history = JSON.parse(localStorage.getItem('g360-history-discount') || '[]');
-      history.unshift(historyItem);
-      localStorage.setItem('g360-history-discount', JSON.stringify(history.slice(0, 50)));
-      
-      if (!alsoShare) {
-        discountStore.clearAll();
-        targetPrice = 0;
-        targetDisplayValue = '';
-        onShowToast('Cálculo guardado en el historial', 'success');
-      }
-    } catch (e) {}
+     try {
+       const history = JSON.parse(localStorage.getItem('g360-history-discount') || '[]');
+       history.unshift(historyItem);
+       localStorage.setItem('g360-history-discount', JSON.stringify(history.slice(0, 50)));
+       
+       if (!alsoShare) {
+         discountStore.clearAll();
+         targetPrice = 0;
+         targetDisplayValue = '';
+         onShowToast('Cálculo guardado en el historial', 'success');
+       }
+     } catch (e) {
+       console.error('Error guardando historial de descuentos:', e);
+       onShowToast('Error al guardar en historial', 'error');
+     }
     
     if (alsoShare) {
       doShare();
     }
   }
 
-  function doShare(alsoSave: boolean = true) {
-    if (originalPrice <= 0) return;
-    
-    const now = new Date();
-    const fecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
-    const hora = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-    // Usar la constante de IGV para mayor precisión
-    const finalConIGV = results.finalPrice * (1 + IVA_RATE);
-    
-    let message = `📊 *DESCUENTO REAL* - ${fecha}\n`;
-    message += `─────────────────────\n`;
-    
-    if (clientCode) message += `🔢 Código: ${clientCode}\n`;
-    if (clientName) message += `👤 Cliente: ${clientName}\n`;
-    
-    if (hasTargetPrice) {
-      message += `💰 Precio orig: S/ ${originalPrice.toFixed(2)}\n`;
-      message += `🎯 Precio objetivo: S/ ${targetPrice.toFixed(2)}\n`;
-      message += `📉 *Dscto necesario: ${requiredDiscount.toFixed(1)}%*\n`;
-      message += `─────────────────────\n`;
-      message += `💵 *Final: S/ ${targetPrice.toFixed(2)}*\n`;
-      message += `💵 c/IGV: S/ ${(targetPrice * 1.18).toFixed(2)}\n`;
-    } else {
-      const activeDiscounts = discounts.filter(d => d.isActive);
-      const discountLabels = activeDiscounts.map(d => `${d.percentage}%`).join(' - ');
-      message += `💰 Precio: S/ ${originalPrice.toFixed(2)}\n`;
-      if (discountLabels) {
-        message += `📉 Descuentos: ${discountLabels}\n`;
-      }
-      message += `─────────────────────\n`;
-      message += `💵 *Final: S/ ${results.finalPrice.toFixed(2)}*\n`;
-      message += `💵 c/IGV: S/ ${finalConIGV.toFixed(2)}\n`;
-    }
+   function doShare(alsoSave: boolean = true) {
+     if (originalPrice <= 0) return;
+     
+     const now = new Date();
+     const fecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
+     const hora = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+     // Usar la constante de IGV para mayor precisión
+     const finalConIGV = results.finalPrice * (1 + IVA_RATE);
+     
+     let message = `📊 *DESCUENTO REAL* - ${fecha}\n`;
+     message += `─────────────────────\n`;
+     
+     if (clientCode) message += `🔢 Código: ${clientCode}\n`;
+     if (clientName) message += `👤 Cliente: ${clientName}\n`;
+     
+     if (hasTargetPrice) {
+       message += `💰 Precio orig: S/ ${originalPrice.toFixed(2)}\n`;
+       message += `🎯 Precio objetivo: S/ ${targetPrice.toFixed(2)}\n`;
+       message += `📉 *Dscto necesario: ${requiredDiscount.toFixed(1)}%*\n`;
+       message += `─────────────────────\n`;
+       message += `💵 *Final: S/ ${targetPrice.toFixed(2)}*\n`;
+       message += `💵 c/IGV: S/ ${(targetPrice * (1 + IVA_RATE)).toFixed(2)}\n`;
+     } else {
+       const activeDiscounts = discounts.filter(d => d.isActive);
+       const discountLabels = activeDiscounts.map(d => `${d.percentage}%`).join(' - ');
+       message += `💰 Precio: S/ ${originalPrice.toFixed(2)}\n`;
+       if (discountLabels) {
+         message += `📉 Descuentos: ${discountLabels}\n`;
+       }
+       message += `─────────────────────\n`;
+       message += `💵 *Final: S/ ${results.finalPrice.toFixed(2)}*\n`;
+       message += `💵 c/IGV: S/ ${finalConIGV.toFixed(2)}\n`;
+     }
     
     if (observation) {
       message += `📝 Obs: ${observation}\n`;
@@ -255,12 +258,12 @@
 
   function calculateIgvAdd() {
     const val = parseFloat(igvModalValue) || 0;
-    igvModalResult = val * 1.18;
+    igvModalResult = val * (1 + IVA_RATE);
   }
 
   function calculateIgvRemove() {
     const val = parseFloat(igvModalValue) || 0;
-    igvModalResult = val / 1.18;
+    igvModalResult = val / (1 + IVA_RATE);
   }
 
   function copyIgvResult() {
@@ -648,11 +651,11 @@
     color: var(--theme-muted);
   }
 
-  .result-value {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #8b5cf6;
-  }
+   .result-value {
+     font-size: 1rem;
+     font-weight: 800;
+     color: var(--text-target);
+   }
 
   /* Calculadora IGV Estilos */
   .igv-section {
@@ -669,12 +672,12 @@
   }
 
   .igv-icon { font-size: 1rem; }
-  .igv-title {
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #3b82f6;
-  }
+   .igv-title {
+     font-size: 0.7rem;
+     font-weight: 800;
+     text-transform: uppercase;
+     color: var(--text-info);
+   }
 
   .igv-grid {
     display: grid;
@@ -760,39 +763,39 @@
   }
 
   /* Pestaña Lateral IGV para móviles */
-  .igv-fab {
-    position: fixed;
-    right: 0;
-    top: 45%;
-    transform: translateY(-50%);
-    width: 34px;
-    height: 48px;
-    border-radius: 10px 0 0 10px;
-    border: none;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    font-size: 1.15rem;
-    box-shadow: -2px 0 10px rgba(59, 130, 246, 0.45);
-    cursor: pointer;
-    z-index: 999;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    animation: igvPulse 3s ease-in-out infinite;
-  }
+   .igv-fab {
+     position: fixed;
+     right: 0;
+     top: 45%;
+     transform: translateY(-50%);
+     width: 34px;
+     height: 48px;
+     border-radius: 10px 0 0 10px;
+     border: none;
+     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+     color: white;
+     font-size: 1.15rem;
+     box-shadow: -2px 0 10px rgba(59, 130, 246, 0.45);
+     cursor: pointer;
+     z-index: 999;
+     transition: all 0.2s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     touch-action: manipulation;
+     -webkit-tap-highlight-color: transparent;
+     animation: igvPulse 4s ease-in-out infinite;
+   }
 
   .igv-fab:active {
     transform: translateY(-50%) scale(0.95);
     width: 30px;
   }
 
-  @keyframes igvPulse {
-    0%, 100% { box-shadow: -2px 0 10px rgba(59, 130, 246, 0.45); }
-    50% { box-shadow: -3px 0 16px rgba(59, 130, 246, 0.7); }
-  }
+   @keyframes igvPulse {
+     0%, 100% { box-shadow: -2px 0 8px rgba(59, 130, 246, 0.35); }
+     50% { box-shadow: -2px 0 12px rgba(59, 130, 246, 0.5); }
+   }
 
   @media (min-width: 768px) {
     .igv-fab {
@@ -972,17 +975,17 @@
     border: 2px solid rgba(59, 130, 246, 0.3);
   }
 
-  .igv-modal-result-value {
-    font-size: 1.4rem;
-    font-weight: 800;
-    text-align: center;
-    color: #3b82f6;
-    cursor: pointer;
-    font-family: var(--g360-font-mono, monospace);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
+   .igv-modal-result-value {
+     font-size: 1.4rem;
+     font-weight: 800;
+     text-align: center;
+     color: var(--text-igv);
+     cursor: pointer;
+     font-family: var(--g360-font-mono, monospace);
+     display: flex;
+     flex-direction: column;
+     gap: 0.25rem;
+   }
 
   .copy-hint {
     font-size: 0.55rem;

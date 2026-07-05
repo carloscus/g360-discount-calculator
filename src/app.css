@@ -19,12 +19,19 @@
   --g360-neon-blue: #00d4ff;
   --g360-neon-purple: #a855f7;
 
-  /* Colores semánticos */
-  --primary-color: var(--g360-accent);
-  --success-color: #10b981;
-  --danger-color: #ef4444;
-  --warning-color: #f59e0b;
-  --info-color: #06b6d4;
+   /* Colores semánticos */
+   --primary-color: var(--g360-accent);
+   --success-color: #10b981;
+   --danger-color: #ef4444;
+   --warning-color: #f59e0b;
+   --info-color: #06b6d4;
+
+   /* Colores de texto semánticos para accesibilidad */
+   --text-success: var(--g360-accent);
+   --text-highlight: var(--g360-neon-purple);
+   --text-target: #8b5cf6;
+   --text-info: var(--info-color);
+   --text-igv: #3b82f6;
 
   /* Tipografía G360 - Escala Normalizada */
   --font-xs: 0.75rem;
@@ -88,6 +95,13 @@
   --neon-glow: 0 4px 12px rgba(0, 208, 132, 0.2);
   --neon-glow-strong: 0 8px 24px rgba(0, 208, 132, 0.3);
   --backlight-accent: radial-gradient(circle at 50% 50%, rgba(0, 208, 132, 0.08) 0%, transparent 70%);
+
+  /* Colores de texto accesibles para tema claro */
+  --text-success: #047857; /* emerald-700 */
+  --text-highlight: #3730a3; /* indigo-800 */
+  --text-target: #3730a3;
+  --text-info: #0284c7; /* blue-700 */
+  --text-igv: #0369a1; /* blue-800 */
 }
 
 /* ========================================
@@ -104,6 +118,13 @@
   --neon-glow: 0 0 15px rgba(0, 208, 132, 0.5);
   --neon-glow-strong: 0 0 25px rgba(0, 208, 132, 0.7);
   --backlight-accent: radial-gradient(circle at 50% 50%, rgba(0, 208, 132, 0.2) 0%, transparent 75%);
+
+  /* Colores de texto accesibles para tema oscuro */
+  --text-success: #a7f3d0; /* emerald-200 */
+  --text-highlight: #e9d5ff; /* purple-200 */
+  --text-target: #e9d5ff;
+  --text-info: #bae6fd; /* sky-200 */
+  --text-igv: #bae6fd; /* sky-200 */
 }
 
 /* ========================================
@@ -203,4 +224,12 @@ html {
 ::-webkit-scrollbar-thumb {
   background: var(--g360-accent);
   border-radius: 4px;
+}
+
+/* Accesibilidad: Preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

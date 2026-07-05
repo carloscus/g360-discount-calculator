@@ -176,10 +176,10 @@
     text-align: right; font-family: var(--g360-font-mono, monospace);
   }
   
-  .final-text { color: var(--g360-neon-purple); font-size: 1.2rem; }
-  .success-text { color: var(--g360-accent); font-size: 1.1rem; }
-  .target-text { color: #8b5cf6; }
-  .info-text { color: var(--info-color); font-size: 0.8rem; }
+   .final-text { color: var(--text-highlight); font-size: 1.2rem; }
+   .success-text { color: var(--text-success); font-size: 1.1rem; }
+   .target-text { color: var(--text-target); }
+   .info-text { color: var(--text-info); font-size: 0.8rem; }
 
   .results-empty { text-align: center; padding: 1.5rem 1rem; }
   .empty-icon { font-size: 1.5rem; opacity: 0.3; margin-bottom: 0.5rem; }

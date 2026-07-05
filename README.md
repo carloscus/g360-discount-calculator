@@ -395,6 +395,18 @@ npx gh-pages -d build -t true
 
 ## 📋 Changelog
 
+### v2.4.0 (2026-07-04)
+- ♿ **Accesibilidad mejorada** - Variables semánticas de color con alto contraste WCAG
+- 🎨 **Tema claro/oscuro optimizado** - Colores de texto ajustados por modo
+- 🔧 **Cálculos precisos** - Centralizado redondeo con `roundToDecimals()`
+- 🔧 **IVA consistente** - Reemplazado `1.18` por `IVA_RATE` en toda la app
+- 🛡️ **Validación robusta** - Porcentajes limitados a rango 0-100%
+- 👾 **Tipos seguros** - Reemplazado `any` por `unknown` en stores
+- ⚡ **Accesibilidad** - Soporte `prefers-reduced-motion` para animations
+- ✨ **Animación suave** - FAB IGV con pulso más sutil (4s, menor intensidad)
+- 🐛 **Manejo errores** - `console.error` en catch de localStorage
+- 🧹 **Refactor CSS** - Variable semánticas `--text-success`, `--text-target`, `--text-igv`
+
 ### v2.3.0 (2026-04-21)
 - ✨ **Calculadora Rápida IGV** - Modal compacto centrado
 - ✨ **Pestaña lateral flotante** para móviles

@@ -18,7 +18,7 @@
     const rawValue = target.value;
     const cleaned = rawValue.replace(/[^\d.]/g, '');
     const parsed = parsePercentage(cleaned);
-    const limited = Math.min(parsed, 100);
+    const limited = Math.max(0, Math.min(parsed, 100));
     onUpdate(discount.id, limited);
   }
   
