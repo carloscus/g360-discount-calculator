@@ -48,7 +48,7 @@ export function generateDiscountText(
   text += `   • Ahorro: ${formatCurrency(results.savings)}\n\n`;
   
   text += `───────────────────────────────────────\n`;
-  text += `Powered by G360 Ecosystem | CCUSI 2026`;
+  text += `_Powered by G360_`;
   
   return text;
 }
