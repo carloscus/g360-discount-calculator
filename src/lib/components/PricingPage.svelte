@@ -4,7 +4,7 @@
   import SegmentedControl from './SegmentedControl.svelte';
   import PricingResults from './PricingResults.svelte';
   import { formatCurrency, parseNumber } from '../utils/formatting';
-  import { copyPricingResults, sharePricingViaWhatsApp } from '../utils/sharing';
+  import { sharePricingViaWhatsApp } from '../utils/sharing';
   import { IVA_RATE } from '../types';
   
   export let onShowToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -22,7 +22,8 @@
     markup: 0,
     ivaAmount: 0,
     finalPrice: 0,
-    grossProfit: 0
+    grossProfit: 0,
+    grossProfitWithIGV: 0
   };
 
   let costInputValue = '';
@@ -32,7 +33,6 @@
 
   let costError = '';
   let marginError = '';
-  let markupError = '';
   let priceError = '';
 
   function validateCost(value: number): string {
@@ -107,9 +107,12 @@
     setTimeout(() => target.select(), 0);
   }
 
-  // Funciones de manejo
   function handleModeChange(newMode: PricingMode) {
     pricingStore.setMode(newMode);
+    if (newMode === 'margin') {
+      // Resetear precio cuando cambiamos a modo margen (se calcula automático)
+      pricingStore.setPrice(0);
+    }
   }
 
   function handleInputModeToggle() {
@@ -141,13 +144,6 @@
     marginError = validatePercentage(val, 99.99);
   }
 
-  function handleMarkupInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const val = parseNumber(target.value.replace(/[^\d.]/g, ''));
-    pricingStore.setMarkup(val);
-    markupError = validatePercentage(val);
-  }
-
   function handlePriceInput(event: Event) {
     const target = event.target as HTMLInputElement;
     const val = processValue(target.value);
@@ -169,49 +165,6 @@
       }
     } else {
       onShowToast('Ya está limpio', 'info');
-    }
-  }
-
-  function doSave(alsoShare: boolean = false) {
-    if (cost <= 0) return;
-
-    const historyItem = {
-      cost,
-      sellingPrice: results.sellingPrice,
-      results,
-      clientCode: '',
-      clientName: '',
-      observation: '',
-      mode: mode,
-      inputModeIGV,
-      timestamp: new Date().toISOString(),
-      fromWSP: alsoShare
-    };
-
-    try {
-      const history = JSON.parse(localStorage.getItem('g360-history-pricing') || '[]');
-      history.unshift(historyItem);
-      localStorage.setItem('g360-history-pricing', JSON.stringify(history.slice(0, 50)));
-
-      if (!alsoShare) {
-        pricingStore.clear();
-        onShowToast('Guardado en historial', 'success');
-      }
-    } catch (e) {
-      onShowToast('Error al guardar', 'error');
-    }
-
-    if (alsoShare) {
-      handleShareWhatsApp();
-    }
-  }
-
-  function doShare(alsoSave: boolean = true) {
-    if (cost <= 0) return;
-    handleShareWhatsApp();
-
-    if (alsoSave) {
-      doSave(false);
     }
   }
 </script>
@@ -268,22 +221,6 @@
             <span class="percentage-suffix">%</span>
           </div>
           {#if marginError}<span class="input-error-text">{marginError}</span>{/if}
-        {:else if mode === 'markup'}
-          <label class="input-label">📈 Markup %</label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              class="percentage-input"
-              class:invalid={!!markupError}
-              placeholder="0"
-              value={markup > 0 ? markup.toString() : ''}
-              on:input={handleMarkupInput}
-              on:focus={handleFocus}
-              inputmode="decimal"
-            />
-            <span class="percentage-suffix">%</span>
-          </div>
-          {#if markupError}<span class="input-error-text">{markupError}</span>{/if}
         {:else}
           <label class="input-label">💵 Venta {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
           <div class="input-wrapper">
@@ -310,12 +247,11 @@
     </div>
   </div>
 
-  <PricingResults {results} hasData={$hasPricingData} />
+  <PricingResults {results} hasData={$hasPricingData} {cost} />
 
   <div class="action-buttons-grid">
     <button class="action-btn clear-btn" on:click={handleClear}>🗑️ Limpiar</button>
-    <button class="action-btn save-btn" on:click={() => doSave()} disabled={cost <= 0}>💾 Guardar</button>
-    <button class="action-btn share-btn whatsapp full-width" on:click={() => doShare()} disabled={cost <= 0}>💬 WhatsApp</button>
+    <button class="action-btn share-btn whatsapp" on:click={handleShareWhatsApp} disabled={cost <= 0}>💬 WhatsApp</button>
   </div>
 </div>
 
@@ -362,7 +298,7 @@
 
   .neto-hint { font-size: 0.6rem; color: var(--g360-accent); font-weight: 600; text-align: right; margin-top: 3px; display: block; }
 
-  .action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.35rem; margin-top: 1rem; margin-bottom: 1rem; overflow-x: auto; }
+  .action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; margin-top: 1rem; margin-bottom: 1rem; overflow-x: auto; }
   .action-btn { 
     display: flex; align-items: center; justify-content: center; gap: 0.4rem;
     min-height: 52px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
@@ -370,12 +306,11 @@
     width: 100%;
   }
   .clear-btn { background: var(--theme-surface); border: 1px solid var(--theme-border); color: var(--theme-text); }
-  .save-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
   .whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
   .action-btn:disabled { opacity: 0.5; }
 
   @media (max-width: 480px) {
-    .action-buttons-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .action-buttons-grid { grid-template-columns: 1fr 1fr; }
   }
 
   /* Responsive móvil优先级 */

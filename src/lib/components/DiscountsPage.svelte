@@ -276,7 +276,7 @@
   <div class="header-section glass-card">
     <div class="inputs-grid">
       <div class="input-group full-width">
-        <label class="input-label">💰 Precio Base Original (S/)</label>
+        <span class="input-label">💰 Precio Base Original (S/)</span>
         <PriceInput value={originalPrice} onChange={handlePriceChange} compact={true} />
       </div>
     </div>
@@ -363,7 +363,7 @@
       </div>
 
       <div class="igv-modal-content">
-        <label class="igv-modal-label">Valor a calcular</label>
+        <span class="igv-modal-label">Valor a calcular</span>
         <div class="igv-modal-input-wrapper">
           <span class="igv-modal-prefix">S/</span>
           <input 
@@ -395,11 +395,11 @@
 
         {#if igvModalResult > 0}
         <div class="igv-modal-result">
-          <label class="igv-modal-label">Resultado</label>
-          <div class="igv-modal-result-value" on:click={copyIgvResult}>
+          <span class="igv-modal-label">Resultado</span>
+          <button type="button" class="igv-modal-result-value" on:click={copyIgvResult}>
             <span>{formatCurrency(igvModalResult, false)}</span>
             <span class="copy-hint">Click para copiar</span>
-          </div>
+          </button>
         </div>
         {/if}
       </div>
@@ -445,19 +445,6 @@
     font-size: var(--font-md);
   }
 
-  .discount-percent-input {
-    font-size: var(--font-md);
-    font-weight: var(--weight-extrabold);
-  }
-  
-  :global(.price-input-container.compact .currency-prefix) {
-    font-size: 1rem;
-  }
-  
-  .add-discount-btn { 
-    width: 100%; height: 38px; background: var(--g360-accent); color: var(--g360-bg); 
-    border: none; border-radius: 8px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
-  }
 
   .section-header h3 { font-size: var(--font-sm); margin: 0 0 0.5rem 0; font-weight: var(--weight-extrabold); text-transform: uppercase; }
   .section-header .count { color: var(--g360-accent); }
@@ -465,11 +452,11 @@
   .discounts-list { 
     display: grid; 
     grid-template-columns: repeat(4, 1fr); 
-    gap: 0.3rem; 
-    max-height: 300px; 
+    gap: 0.4rem; 
+    max-height: 350px; 
     overflow-y: auto; 
     overflow-x: auto;
-    padding: 0.25rem;
+    padding: 0.3rem;
   }
 
   .empty { 
@@ -494,12 +481,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    padding: 0.65rem 0.5rem;
     background: var(--theme-bg);
     border: 2px dashed var(--theme-border);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s;
+    min-height: 60px;
   }
 
   .add-discount-row:hover {

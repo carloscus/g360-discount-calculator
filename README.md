@@ -95,8 +95,6 @@ g360-discount-calculator/
 │   ├── core/               # Integración G360
 │   │   ├── g360-skill-client.js
 │   │   └── g360-theme.css
-│   ├── App.svelte          # Componente raíz
-│   ├── main.ts             # Punto de entrada
 │   ├── app.html            # Template HTML
 │   └── app.css             # Estilos globales
 ├── static/                 # Archivos estáticos (generados en build/)
@@ -234,16 +232,17 @@ Los archivos compilados **NO** se versionar, solo el código fuente.
 
 1. Selecciona el modo de cálculo:
    - **Margen % → Precio**: Calcula precio desde margen deseado
-   - **Markup % → Precio**: Calcula precio desde markup deseado
-   - **Costo + Precio**: Ingresa ambos valores directamente
+   - **Venta Directa**: Ingresa precio y calcula margen/markup
 2. Ingresa el **costo** del producto
-3. Configura el **margen** o **markup** deseado
-4. Opcional: Activa **Incluir IGV 18%**
+3. Configura el **margen** deseado (o precio de venta en modo directo)
+4. Opcional: Activa **Ingreso con IGV** para calcular neto automático
 5. Visualiza:
    - Precio de venta recomendado
-   - Margen bruto
+   - Margen bruto (semáforo de rentabilidad)
    - Markup
+   - Ganancia neta y ganancia con IGV
    - Monto de IGV (si aplica)
+6. Comparte por WhatsApp (sin guardado - herramienta rápida)
 
 ### Historial
 

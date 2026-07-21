@@ -11,7 +11,6 @@ import { writable, derived } from 'svelte/store';
 import type { PricingMode, PricingResult } from '../types';
 import { 
   calculatePriceFromMargin, 
-  calculatePriceFromMarkup,
   calculatePricingResults
 } from '../utils/calculations';
 import { browser } from '$app/environment';
@@ -22,10 +21,10 @@ function createPricingStore() {
     mode: savedState?.mode || 'margin' as PricingMode,
     cost: savedState?.cost || 0,
     margin: savedState?.margin || 35,
-    markup: savedState?.markup || 53.85,
+    markup: savedState?.markup || 0,
     price: savedState?.price || 0,
     includeIGV: true,
-    inputModeIGV: savedState?.inputModeIGV || false // NUEVO: Indica si los inputs incluyen IVA (IGV en Perú)
+    inputModeIGV: savedState?.inputModeIGV || false
   };
 
   const { subscribe, set, update } = writable(initialState);
@@ -90,8 +89,6 @@ export const pricingResults = derived(
     let sellingPrice = 0;
     if ($store.mode === 'margin') {
       sellingPrice = calculatePriceFromMargin($store.cost, $store.margin);
-    } else if ($store.mode === 'markup') {
-      sellingPrice = calculatePriceFromMarkup($store.cost, $store.markup);
     } else {
       sellingPrice = $store.price;
     }

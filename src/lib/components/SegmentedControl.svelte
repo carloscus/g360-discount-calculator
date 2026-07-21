@@ -6,7 +6,6 @@
   
   const options: { value: PricingMode; label: string; icon: string }[] = [
     { value: 'margin', label: 'Margen', icon: '📊' },
-    { value: 'markup', label: 'Markup', icon: '📈' },
     { value: 'cost-price', label: 'Costo+Venta', icon: '💰' }
   ];
 </script>

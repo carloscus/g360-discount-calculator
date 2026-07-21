@@ -4,18 +4,19 @@
   
   export let results: PricingResult;
   export let hasData: boolean;
+  export let cost: number = 0;
 
-  // Lógica de Semáforo de Rentabilidad
-  $: marginColor = results.grossMargin < 15 
-    ? 'var(--danger-color)' 
-    : results.grossMargin < 25 
-      ? 'var(--warning-color)' 
+  // Semáforo de Rentabilidad
+  $: marginColor = results.grossMargin < 15
+    ? 'var(--danger-color)'
+    : results.grossMargin < 25
+      ? 'var(--warning-color)'
       : 'var(--g360-accent)';
-  
-  $: marginGlow = results.grossMargin < 15 
-    ? '0 0 12px rgba(239, 68, 68, 0.15)' 
-    : results.grossMargin < 25 
-      ? '0 0 12px rgba(245, 158, 11, 0.15)' 
+
+  $: marginGlow = results.grossMargin < 15
+    ? '0 0 12px rgba(239, 68, 68, 0.15)'
+    : results.grossMargin < 25
+      ? '0 0 12px rgba(245, 158, 11, 0.15)'
       : 'var(--neon-glow)';
 </script>
 
@@ -26,40 +27,74 @@
   </div>
   
   {#if hasData}
-    <div class="results-grid">
-      <!-- 1. TOTAL FINAL (CON IGV) -->
-      <div class="result-tile highlight-final">
-        <span class="result-label">Total (+IGV)</span>
-        <div class="value-group">
-          <span class="result-value final-text">{formatCurrency(results.finalPrice)}</span>
-          <span class="sub-value">Incl. {formatCurrency(results.ivaAmount)} IGV</span>
+    <div class="results-flow">
+      <!-- FILA 1: Costo → Precio de Venta -->
+      <div class="flow-row">
+        <div class="result-tile input-tile">
+          <span class="result-label">💰 Costo</span>
+          <div class="value-group">
+            <span class="result-value input-text">{formatCurrency(cost)}</span>
+            <span class="sub-value">Lo que inviertes</span>
+          </div>
+        </div>
+
+        <div class="flow-arrow">→</div>
+
+        <div class="result-tile output-tile">
+          <span class="result-label">💵 Precio Venta</span>
+          <div class="value-group">
+            <span class="result-value output-text">{formatCurrency(results.sellingPrice)}</span>
+            <span class="sub-value">Subtotal Neto</span>
+          </div>
         </div>
       </div>
 
-      <!-- 2. MARGEN REAL (CON UTILIDAD) -->
-      <div class="result-tile highlight-dynamic" style="border-color: {marginColor}; box-shadow: {marginGlow}">
-        <span class="result-label" style="color: {marginColor}">Margen Real</span>
-        <div class="value-group">
-          <span class="result-value" style="color: {marginColor}">{formatPercentage(results.grossMargin)}</span>
-          <span class="sub-value">Ganancia: +{formatCurrency(results.grossProfit)}</span>
+      <!-- FILA 2: Margen Real + Markup -->
+      <div class="metrics-row">
+        <div class="result-tile highlight-dynamic" style="border-color: {marginColor}; box-shadow: {marginGlow}">
+          <span class="result-label" style="color: {marginColor}">📊 Margen Real</span>
+          <div class="value-group">
+            <span class="result-value" style="color: {marginColor}">{formatPercentage(results.grossMargin)}</span>
+            <span class="sub-value">Sobre la venta</span>
+          </div>
+        </div>
+
+        <div class="result-tile">
+          <span class="result-label">📈 Markup</span>
+          <div class="value-group">
+            <span class="result-value markup-value">{formatPercentage(results.markup)}</span>
+            <span class="sub-value">Sobre el costo</span>
+          </div>
         </div>
       </div>
-      
-      <!-- 3. VENTA BASE -->
-      <div class="result-tile">
-        <span class="result-label">Venta (Base)</span>
-        <div class="value-group">
-          <span class="result-value base-text">{formatCurrency(results.sellingPrice)}</span>
-          <span class="sub-value">Subtotal Neto</span>
+
+      <!-- FILA 3: Ganancias (Neto y con IGV) -->
+      <div class="metrics-row">
+        <div class="result-tile profit-tile">
+          <span class="result-label">✅ Ganancia Neta</span>
+          <div class="value-group">
+            <span class="result-value profit-text">{formatCurrency(results.grossProfit)}</span>
+            <span class="sub-value">Venta − Costo</span>
+          </div>
+        </div>
+
+        <div class="result-tile profit-igv-tile">
+          <span class="result-label">✅ Ganancia +IGV</span>
+          <div class="value-group">
+            <span class="result-value profit-igv-text">{formatCurrency(results.grossProfitWithIGV)}</span>
+            <span class="sub-value">Total +IGV − Costo</span>
+          </div>
         </div>
       </div>
-      
-      <!-- 4. MARKUP -->
-      <div class="result-tile">
-        <span class="result-label">Markup</span>
-        <div class="value-group">
-          <span class="result-value markup-value">{formatPercentage(results.markup)}</span>
-          <span class="sub-value">Sobre el Costo</span>
+
+      <!-- FILA 4: Total con IGV (Final) -->
+      <div class="total-row">
+        <div class="result-tile highlight-final">
+          <span class="result-label">💵 CLIENTE PAGA</span>
+          <div class="value-group">
+            <span class="result-value final-text">{formatCurrency(results.finalPrice)}</span>
+            <span class="sub-value">Incluye S/ {formatCurrency(results.ivaAmount, false)} de IGV</span>
+          </div>
         </div>
       </div>
     </div>
@@ -85,27 +120,86 @@
     text-transform: uppercase; letter-spacing: 0.5px; margin: 0;
   }
 
-  .results-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  .results-flow {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
-  
+
+  /* FILA 1: Costo → Precio */
+  .flow-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .flow-arrow {
+    font-size: 1.3rem;
+    color: var(--g360-accent);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
+  /* FILAS 2, 3: Dos métricas lado a lado */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  /* FILA 4: Total ancho completo */
+  .total-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
   .result-tile {
-    display: flex; flex-direction: column; padding: 0.6rem;
+    display: flex; flex-direction: column; padding: 0.65rem;
     background: var(--theme-surface); border-radius: 12px;
     border: 1px solid var(--theme-border); transition: all 0.2s ease;
     min-height: 60px; justify-content: space-between;
   }
 
+  .input-tile {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .output-tile {
+    background: rgba(0, 208, 132, 0.08);
+    border-color: rgba(0, 208, 132, 0.2);
+  }
+
+  .profit-tile {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+
+  .profit-igv-tile {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+
   .highlight-final {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), transparent);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.12), transparent);
     border-color: var(--g360-neon-purple);
+    border-width: 2px;
+  }
+
+  .highlight-dynamic {
+    background: linear-gradient(135deg, rgba(0, 208, 132, 0.08), transparent);
   }
 
   .value-group { display: flex; flex-direction: column; align-items: flex-end; }
 
-  .sub-value { font-size: 0.65rem; font-weight: 600; opacity: 0.6; margin-top: -1px; }
+  .sub-value {
+    font-size: 0.6rem; font-weight: 600; opacity: 0.65; margin-top: 1px;
+    white-space: nowrap;
+  }
   
   .result-label {
     font-size: 0.6rem; color: var(--theme-muted); font-weight: 700;
@@ -113,29 +207,35 @@
   }
   
   .result-value {
-    font-size: 0.95rem; font-weight: 800; color: var(--theme-text);
+    font-size: 1rem; font-weight: 800; color: var(--theme-text);
     text-align: right; font-family: var(--g360-font-mono, monospace);
   }
   
-  .final-text { color: var(--g360-neon-purple); font-size: 1rem; }
-  .base-text { color: var(--g360-accent); }
+  .final-text { color: var(--g360-neon-purple); font-size: 1.15rem; }
+  .input-text { color: var(--danger-color); }
+  .output-text { color: var(--g360-accent); font-size: 1.1rem; }
   .markup-value { color: var(--info-color); }
+  .profit-text { color: #22c55e; }
+  .profit-igv-text { color: #3b82f6; }
 
   .results-empty { text-align: center; padding: 1.5rem 1rem; }
   .empty-icon { font-size: 1.5rem; opacity: 0.3; margin-bottom: 0.5rem; }
   .empty-text { color: var(--theme-muted); font-size: 0.75rem; margin: 0; }
-  
+
   @media (max-width: 600px) {
-    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; }
-    .result-tile { padding: 0.5rem; min-height: 56px; }
+    .flow-row { grid-template-columns: 1fr auto 1fr; gap: 0.3rem; }
+    .flow-arrow { font-size: 1.1rem; }
+    .metrics-row { grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+    .result-tile { padding: 0.5rem; min-height: 54px; }
     .result-label { font-size: 0.55rem; }
     .result-value { font-size: 0.85rem; }
     .sub-value { font-size: 0.55rem; }
-    .final-text { font-size: 0.95rem; }
+    .final-text { font-size: 1rem; }
   }
 
   @media (max-width: 380px) {
-    .result-tile { min-height: 52px; }
+    .result-tile { min-height: 50px; padding: 0.45rem; }
     .result-value { font-size: 0.8rem; }
+    .flow-row { grid-template-columns: 1fr auto 1fr; }
   }
 </style>

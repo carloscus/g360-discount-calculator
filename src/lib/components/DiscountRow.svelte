@@ -84,10 +84,10 @@
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    padding: 0.25rem;
+    border-radius: 10px;
+    padding: 0.35rem;
     transition: all 0.2s ease;
-    height: var(--height-lg);
+    height: 60px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -181,10 +181,10 @@
     background: transparent;
     border: none;
     text-align: right;
-    padding-right: 4px;
+    padding-right: 6px;
     color: var(--theme-text);
     font-family: var(--g360-font-mono, monospace);
-    font-size: var(--font-md);
+    font-size: var(--font-lg);
     font-weight: 800;
     outline: none;
   }

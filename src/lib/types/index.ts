@@ -38,7 +38,7 @@ export interface DiscountResult {
 // Tipos para Pricing (Costo → Precio)
 // ========================================
 
-export type PricingMode = 'margin' | 'markup' | 'cost-price';
+export type PricingMode = 'margin' | 'cost-price';
 
 export interface PricingState {
   mode: PricingMode;
@@ -56,6 +56,7 @@ export interface PricingResult {
   ivaAmount: number;
   finalPrice: number;
   grossProfit: number;
+  grossProfitWithIGV: number;
 }
 
 // ========================================

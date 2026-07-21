@@ -227,6 +227,8 @@ export function calculatePricingResults(
   // para ser consistente con los labels de la interfaz (+IGV).
   const finalPrice = addIVA(sellingPrice); 
    const grossProfit = sellingPrice - cost;
+   // Ganancia con IGV: ingreso total (precio+IGV) menos el costo
+   const grossProfitWithIGV = finalPrice - cost;
 
    return {
      sellingPrice: roundToDecimals(sellingPrice, 2),
@@ -234,7 +236,8 @@ export function calculatePricingResults(
      markup: roundToDecimals(markup, 2),
      ivaAmount: roundToDecimals(ivaAmount, 2),
      finalPrice: roundToDecimals(finalPrice, 2),
-     grossProfit: roundToDecimals(grossProfit, 2)
+     grossProfit: roundToDecimals(grossProfit, 2),
+     grossProfitWithIGV: roundToDecimals(grossProfitWithIGV, 2)
    };
 }
 
