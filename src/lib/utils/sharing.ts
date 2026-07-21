@@ -70,14 +70,16 @@ export function generatePricingText(
   text += `   • Precio de venta: ${formatCurrency(results.sellingPrice)}\n`;
   text += `   • Margen bruto: ${formatPercentage(results.grossMargin)}\n`;
   text += `   • Markup: ${formatPercentage(results.markup)}\n`;
+  text += `   • Ganancia: ${formatCurrency(results.grossProfit)}\n`;
   
   if (includeIVA) {
     text += `   • IGV (18%): ${formatCurrency(results.ivaAmount)}\n`;
     text += `   • Precio final: ${formatCurrency(results.finalPrice)}\n`;
+    text += `   • Ganancia +IGV: ${formatCurrency(results.grossProfitWithIGV)}\n`;
   }
   
   text += `\n───────────────────────────────────────\n`;
-  text += `Powered by G360 Ecosystem | CCUSI 2026`;
+  text += `_Powered by G360_`;
   
   return text;
 }
