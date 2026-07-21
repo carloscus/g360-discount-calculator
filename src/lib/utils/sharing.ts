@@ -61,7 +61,7 @@ export function generatePricingText(
   results: PricingResult,
   includeIVA: boolean
 ): string {
-  let text = `📊 DESCUENTO REAL - Cálculo de Precio\n`;
+  let text = `📊 CÁLCULO DE VENTA\n`;
   text += `═══════════════════════════════════════\n\n`;
   
   text += `💰 COSTO: ${formatCurrency(cost)}\n\n`;
