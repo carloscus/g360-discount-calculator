@@ -599,7 +599,7 @@
     pointer-events: none;
   }
 
-  .target-input {
+  .target-inuput {
     width: 100%;
     padding: 0.6rem 0.6rem 0.6rem 1.8rem;
     border: 1px solid var(--theme-border);
