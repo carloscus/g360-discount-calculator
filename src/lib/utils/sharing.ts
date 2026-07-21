@@ -178,7 +178,7 @@ export function shareDiscountViaWhatsApp(
   }
   
   text += `─────────────────────\n`;
-  text += `_G360 Calculator_`;
+  text += `_Powered by G360_`;
   
   const url = generateWhatsAppURL(text);
   window.open(url, '_blank');

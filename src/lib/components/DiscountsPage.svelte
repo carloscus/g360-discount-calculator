@@ -237,7 +237,7 @@
     }
     
     message += `─────────────────────\n`;
-    message += `_G360 | ${hora}_`;
+    message += `_Powered by G360_`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
