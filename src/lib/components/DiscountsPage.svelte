@@ -43,7 +43,8 @@
   function handleTargetInput(event: Event) {
     const target = event.target as HTMLInputElement;
     const rawValue = target.value;
-    const cleaned = rawValue.replace(/[^\d.]/g, '');
+    // Allow only one dot, remove extra dots
+    const cleaned = rawValue.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
     targetDisplayValue = rawValue;
     targetPrice = parseFloat(cleaned) || 0;
   }
@@ -75,8 +76,20 @@
     : 0;
   
   $: hasTargetPrice = targetPrice > 0 && targetPrice < originalPrice;
-  $: showDiscounts = !hasTargetPrice;
-  $: canAddMoreDiscounts = showDiscounts && discounts.length < MAX_DISCOUNTS;
+  $: canAddMoreDiscounts = !hasTargetPrice && discounts.length < MAX_DISCOUNTS;
+  
+  // Track previous state to detect mode switches
+  let prevHasTargetPrice = false;
+  $: if (hasTargetPrice !== prevHasTargetPrice) {
+    if (hasTargetPrice && !prevHasTargetPrice) {
+      // Switching from discount mode to target price mode
+      onShowToast('Modo Precio Objetivo activado. Los descuentos manuales están deshabilitados.', 'info');
+    } else if (!hasTargetPrice && prevHasTargetPrice) {
+      // Switching from target price mode to discount mode
+      onShowToast('Modo Descuentos activado. Puedes agregar descuentos manuales.', 'info');
+    }
+    prevHasTargetPrice = hasTargetPrice;
+  }
   
   function handleAddDiscount() {
     if (hasTargetPrice) {
@@ -282,36 +295,34 @@
     </div>
   </div>
   
-  {#if !hasTargetPrice}
   <div class="discounts-section glass-card">
     <div class="section-header">
       <h3>Descuentos Aplicados <span class="count">({discounts.length}/{MAX_DISCOUNTS})</span></h3>
     </div>
     
-    <div class="discounts-list">
-      {#if showDiscounts}
-        {#each discounts as discount (discount.id)}
-          <DiscountRow {discount} onUpdate={handleUpdateDiscount} onRemove={handleRemoveDiscount} onToggle={handleToggleDiscount} />
-        {/each}
-        {#if canAddMoreDiscounts}
-          <button class="add-discount-row" on:click={handleAddDiscount}>
-            <span class="add-icon">+</span>
-            <span class="add-text">Agregar Descuento</span>
-          </button>
-        {/if}
-        {#if discounts.length === 0 && !canAddMoreDiscounts}
-          <div class="empty">Agrega tu primer descuento para comenzar</div>
-        {/if}
-      {:else}
-        <div class="target-mode-indicator">
-          <span class="indicator-icon">🎯</span>
-          <span class="indicator-text">Modo Precio Objetivo</span>
-          <span class="indicator-hint">El descuento se calcula automáticamente</span>
-        </div>
+    {#if hasTargetPrice}
+      <div class="target-mode-banner">
+        <span class="banner-icon">🎯</span>
+        <span class="banner-text">Modo Precio Objetivo</span>
+        <span class="banner-hint">Los descuentos manuales están deshabilitados. El descuento necesario se calcula automáticamente.</span>
+      </div>
+    {/if}
+    
+    <div class="discounts-list" class:disabled={hasTargetPrice}>
+      {#each discounts as discount (discount.id)}
+        <DiscountRow {discount} onUpdate={handleUpdateDiscount} onRemove={handleRemoveDiscount} onToggle={handleToggleDiscount} disabled={hasTargetPrice} />
+      {/each}
+      {#if !hasTargetPrice && canAddMoreDiscounts}
+        <button class="add-discount-row" on:click={handleAddDiscount}>
+          <span class="add-icon">+</span>
+          <span class="add-text">Agregar Descuento</span>
+        </button>
+      {/if}
+      {#if discounts.length === 0 && !canAddMoreDiscounts}
+        <div class="empty">Agrega tu primer descuento para comenzar</div>
       {/if}
     </div>
   </div>
-  {/if}
    
   <ResultsCard results={results} hasDiscounts={$hasActiveDiscounts} hasTargetPrice={hasTargetPrice} targetPrice={hasTargetPrice ? targetPrice : 0} requiredDiscount={requiredDiscount} discounts={discounts} />
 
@@ -333,6 +344,7 @@
           on:keydown={handleTargetKeyDown}
           inputmode="decimal"
           placeholder="S/ 0.00"
+          aria-label="Precio objetivo en soles"
         />
       </div>
     </div>
@@ -416,7 +428,6 @@
       action={observationAction} 
       onClose={handleCloseObservationModal} 
       onConfirm={handleConfirmObservation}
-      on:share={() => { doShare(false); discountStore.clearAll(); targetPrice = 0; targetDisplayValue = ''; showObservationModal = false; }}
     />
   {/if}
 </div>
@@ -507,35 +518,37 @@
     text-transform: uppercase;
   }
 
-  .target-mode-indicator {
-    grid-column: span 3;
+  .target-mode-banner {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 1rem;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(109, 40, 217, 0.05));
-    border: 1px dashed rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.3);
     border-radius: 8px;
-    text-align: center;
   }
 
-  .indicator-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
+  .banner-icon {
+    font-size: 1.2rem;
   }
 
-  .indicator-text {
+  .banner-text {
     font-size: 0.75rem;
     font-weight: 800;
     color: #8b5cf6;
     text-transform: uppercase;
   }
 
-  .indicator-hint {
-    font-size: 0.6rem;
+  .banner-hint {
+    font-size: 0.65rem;
     color: var(--theme-muted);
-    margin-top: 0.25rem;
+    margin-left: auto;
+  }
+
+  .discounts-list.disabled {
+    opacity: 0.7;
+    pointer-events: none;
   }
 
   .target-section { padding: 0.6rem; }
@@ -599,7 +612,7 @@
     pointer-events: none;
   }
 
-  .target-inuput {
+  .target-input {
     width: 100%;
     padding: 0.6rem 0.6rem 0.6rem 1.8rem;
     border: 1px solid var(--theme-border);
@@ -750,60 +763,36 @@
     }
   }
 
-  /* Pestaña Lateral IGV para móviles */
+  /* IGV FAB */
    .igv-fab {
      position: fixed;
-     right: 0;
-     top: 45%;
-     transform: translateY(-50%);
-     width: 34px;
-     height: 48px;
-     border-radius: 10px 0 0 10px;
+     bottom: 24px;
+     right: 24px;
+     width: 52px;
+     height: 52px;
+     border-radius: 14px;
      border: none;
      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
      color: white;
      font-size: 1.15rem;
-     box-shadow: -2px 0 10px rgba(59, 130, 246, 0.45);
+     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
      cursor: pointer;
      z-index: 999;
      transition: all 0.2s ease;
      display: flex;
      align-items: center;
      justify-content: center;
-     touch-action: manipulation;
-     -webkit-tap-highlight-color: transparent;
-     animation: igvPulse 4s ease-in-out infinite;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
    }
 
-  .igv-fab:active {
-    transform: translateY(-50%) scale(0.95);
-    width: 30px;
+  .igv-fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
   }
 
-   @keyframes igvPulse {
-     0%, 100% { box-shadow: -2px 0 8px rgba(59, 130, 246, 0.35); }
-     50% { box-shadow: -2px 0 12px rgba(59, 130, 246, 0.5); }
-   }
-
-  @media (min-width: 768px) {
-    .igv-fab {
-      bottom: 24px;
-      right: 24px;
-      top: auto;
-      transform: none;
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
-      animation: none;
-    }
-    .igv-fab:hover {
-      transform: scale(1.08);
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-    }
-    .igv-fab:active {
-      transform: scale(0.95);
-      width: 52px;
-    }
+  .igv-fab:active {
+    transform: scale(0.95);
   }
 
   .igv-modal-overlay {

@@ -1,26 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createEventDispatcher } from 'svelte';
 
   export let action: 'save' | 'share' = 'save';
   export let onClose: () => void;
   export let onConfirm: (data: { code: string; client: string; observation: string }) => void;
-
-  const dispatch = createEventDispatcher();
 
   let code = '';
   let client = '';
   let observation = '';
   let inputRef: HTMLTextAreaElement;
 
-  function handleSubmit() {
-    onConfirm({ code, client, observation });
-  }
 
-  function handleShare() {
-    onConfirm({ code, client, observation });
-    dispatch('share');
-  }
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
@@ -75,17 +65,20 @@
         placeholder="Ej:&#10;Producto: Pelota semideportiva&#10;Nota: Precio acordado especial"
         rows="3"
       ></textarea>
-      <p class="hint">Guarda los datos del acuerdo para consultarlos después</p>
+      <p class="hint">{action === 'save' ? 'Guarda los datos del acuerdo para consultarlos después' : 'Guarda los datos y comparte el cálculo por WhatsApp'}</p>
     </div>
 
     <div class="modal-footer">
       <button class="cancel-btn" on:click={onClose}>✕</button>
-      <button class="save-btn" on:click={() => onConfirm({ code, client, observation })}>
-        💾 Guardar
-      </button>
-      <button class="share-btn" on:click={handleShare}>
-        💬 Enviar
-      </button>
+      {#if action === 'save'}
+        <button class="save-btn" on:click={() => onConfirm({ code, client, observation })}>
+          💾 Solo Guardar
+        </button>
+      {:else}
+        <button class="share-btn" on:click={() => onConfirm({ code, client, observation })}>
+          💬 Guardar y Compartir
+        </button>
+      {/if}
     </div>
   </div>
 </div>

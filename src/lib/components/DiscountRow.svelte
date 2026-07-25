@@ -6,6 +6,7 @@
   export let onUpdate: (id: number, percentage: number) => void;
   export let onRemove: (id: number) => void;
   export let onToggle: (id: number) => void;
+  export let disabled: boolean = false;
   
   $: hasError = discount.percentage > 100;
   
@@ -47,18 +48,18 @@
   }
 </script>
 
-<div class="minimal-tile" class:active={discount.isActive} class:inactive={!discount.isActive} class:has-error={hasError}>
+<div class="minimal-tile" class:active={discount.isActive} class:inactive={!discount.isActive} class:has-error={hasError} class:disabled={disabled}>
   {#if hasError}
     <span class="error-badge" role="alert">Excede 100%</span>
   {/if}
   
   <!-- Botón eliminar (Solo visible en hover) -->
-  <button class="remove-overlay" on:click={() => onRemove(discount.id)} aria-label="Eliminar">
+  <button class="remove-overlay" on:click={() => onRemove(discount.id)} aria-label="Eliminar" disabled={disabled}>
     ✕
   </button>
 
   <!-- Toggle de estado (Área de clic pequeña) -->
-  <button class="status-indicator" on:click={() => onToggle(discount.id)} aria-label="Cambiar estado">
+  <button class="status-indicator" on:click={() => onToggle(discount.id)} aria-label="Cambiar estado" disabled={disabled}>
     <div class="dot"></div>
   </button>
 
@@ -73,7 +74,7 @@
       on:blur={handleBlur}
       on:keydown={handleKeyDown}
       inputmode="decimal"
-      disabled={!discount.isActive}
+      disabled={!discount.isActive || disabled}
       aria-invalid={hasError}
     />
   </div>
@@ -101,6 +102,12 @@
   .minimal-tile.inactive {
     opacity: 0.6;
     filter: grayscale(1);
+  }
+
+  .minimal-tile.disabled {
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    pointer-events: none;
   }
 
   .minimal-tile.has-error {
