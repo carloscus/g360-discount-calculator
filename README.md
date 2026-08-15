@@ -37,7 +37,7 @@
 - **IVA Peruano** - IGV del 18% incluido
 - **Precio Objetivo** - Calcula descuento necesario
 - **🧮 Calculadora Rápida IGV** - Modal flotante agregar/quitar IGV 18%
-- **Pestaña Lateral Móvil** - Acceso rápido siempre visible
+- **FAB IGV accesible** - Botón flotante fijo abajo-derecha en todos los dispositivos
 - **Modo Oscuro/Claro** - Tema G360 con neón
 - **Responsive Short Screen** - Pantallas ≤400px altura
 - **PWA** - Instalable como app nativa
@@ -110,6 +110,7 @@ g360-discount-calculator/
 │   └── skill.json          # Skills de VS Code
 ├── g360/                   # Configuración del ecosistema
 │   └── package.json
+├── .impeccable/            # Reportes de crítica de diseño (impeccable)
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
@@ -393,6 +394,20 @@ npx gh-pages -d build -t true
 - Cualquier servidor estático
 
 ## 📋 Changelog
+
+### v2.5.0 (2026-08-15)
+- 🛡️ **Seguridad endurecida** - `noopener,noreferrer` en `window.open`, validación de descuentos al cargar localStorage
+- 🔧 **Toolchain actualizado** - Svelte 5.56, SvelteKit 2.70, Vite 6.4, PostCSS 8.5 (vulns dev 7 → 4 low)
+- 🐛 **IDs de descuento únicos** - Contador monotónico evita colisiones en clics rápidos
+- 🐛 **Sin fugas de memoria** - Suscripciones limpiadas con `onDestroy`
+- 🐛 **Pricing con IGV correcto** - `calculatePricingResults` respeta `includeIVA`
+- ⚠️ **Aviso precio objetivo** - Warning inline si el objetivo ≥ precio original
+- 💬 **Toast único al compartir** - Flujo WhatsApp ya no duplica avisos
+- 🎯 **Modo precio objetivo claro** - Banner + descuentos deshabilitados (no ocultos)
+- 📱 **Grid móvil 2 columnas** - Inputs de descuento más grandes; botón "Agregar" a ancho completo
+- 👆 **Touch targets ≥44px** - Botón eliminar visible en táctil, indicador de estado ampliado
+- ♿ **Accesibilidad WCAG** - Labels asociados, `tabindex` en dialogs, teclado en overlays, sin autofocus
+- 🧹 **CSS muerto eliminado** - ~350 líneas removidas
 
 ### v2.4.0 (2026-07-04)
 - ♿ **Accesibilidad mejorada** - Variables semánticas de color con alto contraste WCAG
