@@ -138,29 +138,44 @@
     background: var(--danger-color);
     color: white;
     border: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 0 0 0 6px;
-    font-size: 0.6rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 0 0 0 8px;
+    font-size: 0.7rem;
     cursor: pointer;
     display: none;
     z-index: 10;
     align-items: center;
     justify-content: center;
+    padding: 0;
   }
 
   .minimal-tile:hover .remove-overlay {
     display: flex;
   }
 
+  /* En táctil, siempre visible (no hay hover) */
+  @media (hover: none) {
+    .minimal-tile:not(.disabled) .remove-overlay {
+      display: flex;
+    }
+  }
+
   /* Indicador de Estado */
   .status-indicator {
     background: transparent;
     border: none;
-    padding: 0 4px;
+    padding: 0 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 44px;
+  }
+
+  .status-indicator:disabled {
+    cursor: not-allowed;
   }
 
   .dot {

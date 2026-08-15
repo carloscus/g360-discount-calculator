@@ -19,6 +19,16 @@ import { browser } from '$app/environment';
 // ========================================
 
 /**
+ * Genera un id numérico único y monotónico para descuentos.
+ * Evita colisiones cuando se agregan varios descuentos en el mismo milisegundo.
+ */
+let lastDiscountId = 0;
+function nextDiscountId(): number {
+  lastDiscountId = Math.max(Date.now(), lastDiscountId + 1);
+  return lastDiscountId;
+}
+
+/**
  * Crea el store de descuentos con funcionalidades completas
  */
 function createDiscountStore() {
@@ -71,7 +81,7 @@ function createDiscountStore() {
         }
         
         const newDiscount: Discount = {
-          id: Date.now(),
+          id: nextDiscountId(),
           percentage,
           isActive: true
         };
@@ -190,6 +200,21 @@ function saveToStorage(state: { originalPrice: number; discounts: Discount[] }):
 }
 
 /**
+ * Valida que un objeto sea un descuento válido
+ */
+function isValidDiscount(d: unknown): d is Discount {
+  if (!d || typeof d !== 'object') return false;
+  const disc = d as Partial<Discount>;
+  return (
+    typeof disc.id === 'number' &&
+    typeof disc.percentage === 'number' &&
+    !isNaN(disc.percentage) &&
+    isFinite(disc.percentage) &&
+    typeof disc.isActive === 'boolean'
+  );
+}
+
+/**
  * Carga el estado desde localStorage
  */
 function loadFromStorage(): { originalPrice: number; discounts: Discount[] } | null {
@@ -199,8 +224,16 @@ function loadFromStorage(): { originalPrice: number; discounts: Discount[] } | n
     const saved = localStorage.getItem('g360-discounts');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed.originalPrice === 'number' && Array.isArray(parsed.discounts)) {
-        return parsed;
+      if (
+        parsed &&
+        typeof parsed.originalPrice === 'number' &&
+        !isNaN(parsed.originalPrice) &&
+        isFinite(parsed.originalPrice) &&
+        Array.isArray(parsed.discounts)
+      ) {
+        // Validar cada descuento individual para evitar datos corruptos
+        const validDiscounts = parsed.discounts.filter(isValidDiscount);
+        return { originalPrice: parsed.originalPrice, discounts: validDiscounts };
       }
     }
   } catch (e) {

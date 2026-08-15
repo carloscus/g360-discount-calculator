@@ -160,7 +160,7 @@
     text += `G360 | g360-discount-calculator`;
 
     const url = generateWhatsAppURL(text);
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
     onShowToast('Abriendo WhatsApp...', 'info');
     
     selectMode = false;
@@ -209,8 +209,8 @@
   }
 </script>
 
-<div class="modal-overlay" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0">
-  <div class="modal-content" on:click|stopPropagation role="dialog" aria-modal="true">
+<div class="modal-overlay" on:click|self={onClose} on:keydown={(e) => ['Escape', 'Enter', ' '].includes(e.key) && onClose()} role="button" tabindex="0">
+  <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
     <div class="modal-header">
       <h2>📋 Historial de Cálculos</h2>
       <button class="close-btn" on:click={onClose} aria-label="Cerrar">✕</button>
@@ -386,30 +386,6 @@
     cursor: pointer;
     color: var(--theme-muted);
     padding: 0.25rem;
-  }
-
-  .modal-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background: rgba(139, 92, 246, 0.1);
-    border-bottom: 1px solid var(--theme-border);
-    font-size: 0.75rem;
-    color: var(--theme-muted);
-  }
-
-  .info-icon { font-size: 1rem; }
-
-  .clear-all-btn {
-    margin: 0.5rem 1rem;
-    padding: 0.4rem 0.8rem;
-    background: var(--theme-bg);
-    border: 1px solid var(--danger-color);
-    color: var(--danger-color);
-    border-radius: 6px;
-    font-size: 0.75rem;
-    cursor: pointer;
   }
 
   .history-list {

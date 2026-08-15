@@ -222,13 +222,12 @@ export function calculatePricingResults(
   const grossMargin = calculateMargin(cost, sellingPrice);
   const markup = calculateMarkup(cost, sellingPrice);
   const ivaAmount = calculateIVAAmount(sellingPrice);
+  const grossProfit = sellingPrice - cost;
 
-  // El precio final para el análisis de venta siempre debe incluir IGV 
-  // para ser consistente con los labels de la interfaz (+IGV).
-  const finalPrice = addIVA(sellingPrice); 
-   const grossProfit = sellingPrice - cost;
-   // Ganancia con IGV: ingreso total (precio+IGV) menos el costo
-   const grossProfitWithIGV = finalPrice - cost;
+  // El precio final depende de includeIVA: con IGV sumado o el neto de venta
+  const finalPrice = includeIVA ? addIVA(sellingPrice) : sellingPrice;
+  // Ganancia con IGV: ingreso total (precio+IGV) menos el costo
+  const grossProfitWithIGV = includeIVA ? finalPrice - cost : grossProfit;
 
    return {
      sellingPrice: roundToDecimals(sellingPrice, 2),

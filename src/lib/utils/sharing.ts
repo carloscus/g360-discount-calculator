@@ -183,7 +183,7 @@ export function shareDiscountViaWhatsApp(
   text += `_Powered by G360_`;
   
   const url = generateWhatsAppURL(text);
-  window.open(url, '_blank');
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 /**
@@ -198,7 +198,7 @@ export function sharePricingViaWhatsApp(
   
   const text = generatePricingText(cost, results, includeIVA);
   const url = generateWhatsAppURL(text);
-  window.open(url, '_blank');
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 // ========================================
@@ -434,7 +434,7 @@ export function generatePricingHistoryText(history: PricingHistoryItem[]): strin
 export function shareDiscountHistory(history: HistoryItem[]): void {
   const text = generateDiscountHistoryText(history);
   const url = generateWhatsAppURL(text);
-  window.open(url, '_blank');
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 /**
@@ -443,7 +443,7 @@ export function shareDiscountHistory(history: HistoryItem[]): void {
 export function sharePricingHistory(history: PricingHistoryItem[]): void {
   const text = generatePricingHistoryText(history);
   const url = generateWhatsAppURL(text);
-  window.open(url, '_blank');
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 /**

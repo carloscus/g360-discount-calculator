@@ -181,10 +181,11 @@
     <div class="inputs-grid">
       <!-- Costo -->
       <div class="input-group">
-        <label class="input-label">💰 Costo {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
+        <label class="input-label" for="pricing-cost">💰 Costo {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
         <div class="input-wrapper">
           <span class="currency-prefix">S/</span>
           <input
+            id="pricing-cost"
             type="text"
             class="price-input"
             class:invalid={!!costError}
@@ -206,9 +207,10 @@
       <!-- Entrada Dinámica -->
       <div class="input-group">
         {#if mode === 'margin'}
-          <label class="input-label">📊 Margen %</label>
+          <label class="input-label" for="pricing-margin">📊 Margen %</label>
           <div class="input-wrapper">
             <input
+              id="pricing-margin"
               type="text"
               class="percentage-input"
               class:invalid={!!marginError}
@@ -222,10 +224,11 @@
           </div>
           {#if marginError}<span class="input-error-text">{marginError}</span>{/if}
         {:else}
-          <label class="input-label">💵 Venta {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
+          <label class="input-label" for="pricing-sale">💵 Venta {inputModeIGV ? '(Inc. IGV)' : '(Neto)'}</label>
           <div class="input-wrapper">
             <span class="currency-prefix">S/</span>
           <input
+            id="pricing-sale"
             type="text"
             class="price-input"
             class:invalid={!!priceError}

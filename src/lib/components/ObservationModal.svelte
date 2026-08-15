@@ -25,8 +25,8 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="modal-overlay" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0">
-  <div class="modal-content" on:click|stopPropagation role="dialog" aria-modal="true">
+<div class="modal-overlay" on:click|self={onClose} on:keydown={(e) => ['Escape', 'Enter', ' '].includes(e.key) && onClose()} role="button" tabindex="0">
+  <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
     <div class="modal-header">
       <h2>{action === 'save' ? '💾 Guardar Cálculo' : '💬 Compartir por WhatsApp'}</h2>
       <button class="close-btn" on:click={onClose} aria-label="Cerrar">✕</button>
@@ -236,16 +236,5 @@
 
   .share-btn:hover {
     background: linear-gradient(135deg, #128c7e, #075e54);
-  }
-
-  .confirm-btn {
-    flex: 1;
-    padding: 0.75rem;
-    background: linear-gradient(135deg, var(--g360-accent), #b91c1c);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: 800;
-    cursor: pointer;
   }
 </style>

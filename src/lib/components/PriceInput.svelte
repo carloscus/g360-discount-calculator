@@ -55,7 +55,7 @@
 
 <div class="price-input-container" class:compact class:has-error={error}>
   {#if !compact}
-    <label class="input-label">
+    <label class="input-label" for="price-input">
       <span class="label-icon">💰</span>
       <span class="label-text">Precio (Neto)</span>
     </label>
@@ -64,6 +64,7 @@
   <div class="input-wrapper">
     <span class="currency-prefix">S/</span>
     <input
+      id="price-input"
       type="text"
       class="price-input"
       placeholder="S/ 0.00"

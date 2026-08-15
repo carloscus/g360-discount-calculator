@@ -60,10 +60,6 @@
     color: var(--theme-text);
   }
   
-  .engine {
-    font-weight: 500;
-  }
-  
   @keyframes pulse {
     0%, 100% {
       opacity: 1;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { discountStore, discountResults, hasActiveDiscounts } from '../stores/discounts';
   import type { Discount, DiscountResult } from '../types';
   import { MAX_DISCOUNTS } from '../types';
@@ -76,6 +77,7 @@
     : 0;
   
   $: hasTargetPrice = targetPrice > 0 && targetPrice < originalPrice;
+  $: targetPriceExceedsOriginal = targetPrice > 0 && originalPrice > 0 && targetPrice >= originalPrice;
   $: canAddMoreDiscounts = !hasTargetPrice && discounts.length < MAX_DISCOUNTS;
   
   // Track previous state to detect mode switches
@@ -104,14 +106,19 @@
     onShowToast('Descuento agregado correctamente', 'success');
   }
   
-  discountStore.subscribe(state => {
+  const unsubscribeDiscounts = discountStore.subscribe(state => {
     originalPrice = state.originalPrice;
     discounts = state.discounts;
     canAddMore = state.discounts.length < MAX_DISCOUNTS;
   });
   
-  discountResults.subscribe(value => {
+  const unsubscribeResults = discountResults.subscribe(value => {
     results = value;
+  });
+
+  onDestroy(() => {
+    unsubscribeDiscounts();
+    unsubscribeResults();
   });
   
   function handlePriceChange(value: any) {
@@ -170,7 +177,7 @@
     observation = '';
   }
 
-  function doSave(alsoShare: boolean = false) {
+  function doSave(alsoShare: boolean = false, notify: boolean = true) {
     if (originalPrice <= 0) return;
     
     const activeDiscounts = discounts.filter(d => d.isActive);
@@ -199,7 +206,7 @@
          discountStore.clearAll();
          targetPrice = 0;
          targetDisplayValue = '';
-         onShowToast('Cálculo guardado en el historial', 'success');
+         if (notify) onShowToast('Cálculo guardado en el historial', 'success');
        }
      } catch (e) {
        console.error('Error guardando historial de descuentos:', e);
@@ -216,7 +223,6 @@
      
      const now = new Date();
      const fecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
-     const hora = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
      // Usar la constante de IGV para mayor precisión
      const finalConIGV = results.finalPrice * (1 + IVA_RATE);
      
@@ -227,22 +233,22 @@
      if (clientName) message += `👤 Cliente: ${clientName}\n`;
      
      if (hasTargetPrice) {
-       message += `💰 Precio orig: S/ ${originalPrice.toFixed(2)}\n`;
-       message += `🎯 Precio objetivo: S/ ${targetPrice.toFixed(2)}\n`;
+       message += `💰 Precio orig: ${formatCurrency(originalPrice)}\n`;
+       message += `🎯 Precio objetivo: ${formatCurrency(targetPrice)}\n`;
        message += `📉 *Dscto necesario: ${requiredDiscount.toFixed(1)}%*\n`;
        message += `─────────────────────\n`;
-       message += `💵 *Final: S/ ${targetPrice.toFixed(2)}*\n`;
-       message += `💵 c/IGV: S/ ${(targetPrice * (1 + IVA_RATE)).toFixed(2)}\n`;
+       message += `💵 *Final: ${formatCurrency(targetPrice)}*\n`;
+       message += `💵 c/IGV: ${formatCurrency(targetPrice * (1 + IVA_RATE))}\n`;
      } else {
        const activeDiscounts = discounts.filter(d => d.isActive);
        const discountLabels = activeDiscounts.map(d => `${d.percentage}%`).join(' - ');
-       message += `💰 Precio: S/ ${originalPrice.toFixed(2)}\n`;
+       message += `💰 Precio: ${formatCurrency(originalPrice)}\n`;
        if (discountLabels) {
          message += `📉 Descuentos: ${discountLabels}\n`;
        }
        message += `─────────────────────\n`;
-       message += `💵 *Final: S/ ${results.finalPrice.toFixed(2)}*\n`;
-       message += `💵 c/IGV: S/ ${finalConIGV.toFixed(2)}\n`;
+       message += `💵 *Final: ${formatCurrency(results.finalPrice)}*\n`;
+       message += `💵 c/IGV: ${formatCurrency(finalConIGV)}\n`;
      }
     
     if (observation) {
@@ -253,11 +259,13 @@
     message += `_Powered by G360_`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-    onShowToast('Abriendo WhatsApp y guardando...', 'info');
+    window.open(url, '_blank', 'noopener,noreferrer');
     
     if (alsoSave) {
-      doSave(false);
+      doSave(false, false);
+      onShowToast('WhatsApp abierto y cálculo guardado en el historial', 'success');
+    } else {
+      onShowToast('Abriendo WhatsApp...', 'info');
     }
   }
 
@@ -348,7 +356,12 @@
         />
       </div>
     </div>
-    {#if requiredDiscount > 0}
+    {#if targetPriceExceedsOriginal}
+      <div class="target-warning" role="alert">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">El precio objetivo debe ser menor al precio original (S/ {formatCurrency(originalPrice)})</span>
+      </div>
+    {:else if requiredDiscount > 0}
       <div class="target-result">
         <span class="result-label">Descuento necesario:</span>
         <span class="result-value">{requiredDiscount.toFixed(2)}%</span>
@@ -367,7 +380,7 @@
 
   <!-- Modal Slide IGV -->
   {#if showIgvModal}
-  <div class="igv-modal-overlay" on:click|self={() => showIgvModal = false}>
+  <div class="igv-modal-overlay" on:click|self={() => showIgvModal = false} on:keydown={(e) => e.key === 'Escape' && (showIgvModal = false)} role="button" tabindex="0" aria-label="Cerrar calculadora IGV">
     <div class="igv-modal-panel" transition:fly={{ x: 400, duration: 250, easing: quadOut }}>
       <div class="igv-modal-header">
         <h3 class="igv-modal-title">Calculadora IGV</h3>
@@ -392,7 +405,6 @@
             on:keydown={(e) => {
               if(e.key === 'Enter') calculateIgvRemove();
             }}
-            autofocus
           />
         </div>
 
@@ -471,7 +483,7 @@
   }
 
   .empty { 
-    grid-column: span 4; 
+    grid-column: 1 / -1; 
     text-align: center; 
     padding: 0.5rem; 
     font-size: var(--font-xs); 
@@ -479,8 +491,8 @@
   }
 
   @media (max-width: 640px) {
-    .discounts-list { grid-template-columns: repeat(4, 1fr); }
-    .empty { grid-column: span 4; }
+    .discounts-list { grid-template-columns: repeat(2, 1fr); }
+    .add-discount-row { grid-column: 1 / -1; }
   }
 
   @media (max-width: 400px) {
@@ -552,22 +564,6 @@
   }
 
   .target-section { padding: 0.6rem; }
-  .observation-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--theme-border);
-    border-radius: 8px;
-    background: var(--theme-bg);
-    color: var(--theme-text);
-    font-size: 0.85rem;
-    resize: none;
-    font-family: inherit;
-  }
-  .observation-input:focus {
-    outline: none;
-    border-color: var(--g360-accent);
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
-  }
 
   .target-section {
     padding: 0.6rem;
@@ -646,6 +642,25 @@
     align-items: center;
   }
 
+  .target-warning {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .warning-icon { font-size: 0.9rem; }
+
+  .warning-text {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--danger-color, #ef4444);
+  }
+
   .result-label {
     font-size: 0.7rem;
     font-weight: 600;
@@ -657,111 +672,6 @@
      font-weight: 800;
      color: var(--text-target);
    }
-
-  /* Calculadora IGV Estilos */
-  .igv-section {
-    padding: 0.6rem;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
-    border: 1px solid rgba(59, 130, 246, 0.3);
-  }
-
-  .igv-header {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .igv-icon { font-size: 1rem; }
-   .igv-title {
-     font-size: 0.7rem;
-     font-weight: 800;
-     text-transform: uppercase;
-     color: var(--text-info);
-   }
-
-  .igv-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
-  }
-
-  .igv-column {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .igv-label {
-    font-size: 0.6rem;
-    color: var(--theme-muted);
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: left;
-    letter-spacing: 0.5px;
-  }
-
-  .igv-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .igv-input-wrapper .igv-prefix {
-    position: absolute;
-    left: 0.6rem;
-    color: #3b82f6;
-    font-weight: 800;
-    font-size: 0.85rem;
-    pointer-events: none;
-  }
-
-  .igv-input {
-    width: 100%;
-    padding: 0.6rem 0.6rem 0.6rem 1.8rem;
-    border: 1px solid var(--theme-border);
-    border-radius: 8px;
-    background: var(--theme-bg);
-    color: var(--theme-text);
-    font-size: 1rem;
-    font-weight: 800;
-    text-align: right;
-    font-family: var(--g360-font-mono, monospace);
-  }
-
-  .igv-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-  }
-
-  .igv-result {
-    margin-top: 0.3rem;
-    padding: 0.4rem;
-    background: rgba(59, 130, 246, 0.15);
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .igv-result-label {
-    font-size: 0.6rem;
-    font-weight: 600;
-    color: var(--theme-muted);
-  }
-
-  .igv-result-value {
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: #3b82f6;
-  }
-
-  @media (max-width: 480px) {
-    .igv-grid {
-      grid-template-columns: 1fr;
-    }
-  }
 
   /* IGV FAB */
    .igv-fab {

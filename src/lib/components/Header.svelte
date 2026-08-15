@@ -293,9 +293,6 @@
     .logo-section {
       transform: scale(0.85);
     }
-    .logo-img {
-      height: 22px;
-    }
     .theme-btn {
       width: 30px;
       height: 30px;
@@ -308,9 +305,6 @@
     }
     .logo-section {
       transform: scale(0.7);
-    }
-    .logo-img {
-      height: 18px;
     }
     .theme-btn {
       width: 26px;
