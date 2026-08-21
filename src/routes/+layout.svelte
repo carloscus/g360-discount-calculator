@@ -58,12 +58,11 @@
 
   <main class="main-content">
     <slot />
+    <G360Signature />
   </main>
 
   <BottomNavigation {currentPage} onNavigate={navigateTo} />
 
-  <G360Signature />
-  
   {#if showToast}
     <Toast message={toastMessage} type={toastType} onClose={closeToast} />
   {/if}

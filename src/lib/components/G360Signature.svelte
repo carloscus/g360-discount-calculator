@@ -14,11 +14,9 @@
 
 <style>
   .g360-signature {
-    position: fixed;
-    bottom: 24px;
-    left: 24px;
-    right: auto;
-    z-index: 100;
+    display: flex;
+    justify-content: center;
+    margin: 1rem auto 0.25rem;
     opacity: 0.6;
     transition: all var(--transition-normal);
     pointer-events: auto;
@@ -71,34 +69,6 @@
       opacity: 0.7;
       transform: scale(1.2);
       box-shadow: 0 0 12px var(--g360-accent);
-    }
-  }
-  
-  /* Responsive */
-  @media (max-width: 575px) {
-    .g360-signature {
-      bottom: 96px;
-      left: 12px;
-      right: auto;
-    }
-
-    .signature-content {
-      font-size: 8px;
-      padding: 4px 10px;
-      gap: 5px;
-    }
-  }
-
-  /* Pantallas bajas: la navegación inferior es más compacta */
-  @media (max-height: 500px) {
-    .g360-signature {
-      bottom: 52px;
-    }
-  }
-
-  @media (max-height: 400px) {
-    .g360-signature {
-      bottom: 44px;
     }
   }
 </style>
