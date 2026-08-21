@@ -446,6 +446,10 @@
 
 <style>
   .discounts-page { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.5rem; }
+
+  @media (max-width: 767px) {
+    .discounts-page { padding-right: 44px; }
+  }
   
   .glass-card { padding: 0.6rem !important; margin-bottom: 0 !important; }
   
@@ -673,7 +677,7 @@
      color: var(--text-target);
    }
 
-  /* IGV FAB */
+  /* IGV FAB - Desktop: abajo-derecha */
    .igv-fab {
      position: fixed;
      bottom: 24px;
@@ -703,6 +707,26 @@
 
   .igv-fab:active {
     transform: scale(0.95);
+  }
+
+  /* IGV FAB - Móvil: tab delgado centrado vertical en el borde derecho */
+  @media (max-width: 767px) {
+    .igv-fab {
+      bottom: auto;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 64px;
+      border-radius: 12px 0 0 12px;
+      box-shadow: -2px 0 10px rgba(59, 130, 246, 0.35);
+    }
+    .igv-fab:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+    .igv-fab:active {
+      transform: translateY(-50%) scale(0.95);
+    }
   }
 
   .igv-modal-overlay {
