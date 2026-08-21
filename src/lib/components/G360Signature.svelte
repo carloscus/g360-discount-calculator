@@ -16,7 +16,8 @@
   .g360-signature {
     position: fixed;
     bottom: 24px;
-    right: 24px;
+    left: 24px;
+    right: auto;
     z-index: 100;
     opacity: 0.6;
     transition: all var(--transition-normal);
@@ -76,14 +77,28 @@
   /* Responsive */
   @media (max-width: 575px) {
     .g360-signature {
-      bottom: 16px;
-      right: 16px;
+      bottom: 96px;
+      left: 12px;
+      right: auto;
     }
 
     .signature-content {
       font-size: 8px;
       padding: 4px 10px;
       gap: 5px;
+    }
+  }
+
+  /* Pantallas bajas: la navegación inferior es más compacta */
+  @media (max-height: 500px) {
+    .g360-signature {
+      bottom: 52px;
+    }
+  }
+
+  @media (max-height: 400px) {
+    .g360-signature {
+      bottom: 44px;
     }
   }
 </style>
