@@ -109,7 +109,7 @@
   
   @media (max-width: 575px) {
     .main-content {
-      padding: 0.25rem;
+      padding: 0.15rem;
       padding-top: 65px;
       padding-bottom: 85px;
     }
