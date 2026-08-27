@@ -2,7 +2,7 @@
   "name": "G360 Calculadora de Descuentos",
   "short_name": "G360 Dctos",
   "description": "Calculadora de descuentos consecutivos con IVA peruano",
-  "start_url": "/",
+  "start_url": "/g360-discount-calculator/",
   "display": "standalone",
   "background_color": "#0b1220",
   "theme_color": "#00d084",
@@ -23,7 +23,7 @@
   ],
   "categories": ["finance", "business", "utilities"],
   "lang": "es-PE",
-  "scope": "/",
+  "scope": "/g360-discount-calculator/",
   "prefer_related_applications": false,
   "screenshots": [],
   "shortcuts": []
