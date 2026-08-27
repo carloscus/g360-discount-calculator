@@ -8,15 +8,21 @@
   import Toast from '../lib/components/Toast.svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   
   // Estado del toast
   let showToast = false;
   let toastMessage = '';
   let toastType: 'success' | 'error' | 'info' | 'warning' = 'info';
   
-  // Inicializar tema al montar
+  // Inicializar tema y registrar service worker (solo producción)
   onMount(() => {
     initTheme();
+    if ('serviceWorker' in navigator && import.meta.env.PROD) {
+      navigator.serviceWorker.register(`${base}/service-worker.js`).catch(() => {
+        // No bloquear la app si el registro falla
+      });
+    }
   });
   
   const BASE_PATH = '/g360-discount-calculator';
